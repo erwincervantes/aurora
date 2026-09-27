@@ -14,7 +14,7 @@ def draw(ctx):
     wordmark(ctx, 56, 64, 26)
     text(ctx, "EL SALVADOR · TAX INCENTIVES", 1224, 62, SANS_SEMI, 18, CORAL, "right", tracking=1.5)
     line(ctx, [(56, 84), (1224, 84)], CORAL, 1.4)
-    text(ctx, "Up to", 60, 176, SANS_BOLD, 50, INK)
+    text(ctx, "Up to", 60, 176, HEAD, 50, INK)
     size, baseline = 330, 520
     big_number(ctx, "10", 48, baseline, size)
     ten_w = text_width(ctx, "10", NUM, size)
@@ -23,8 +23,8 @@ def draw(ctx):
     zero = ctx.text_extents("0")
     seat_x = 48 + text_width(ctx, "1", NUM, size) + zero.x_bearing + zero.width * 0.3
     person(ctx, seat_x, baseline + zero.y_bearing, 140, WHITE, BLUE, CORAL, seated=True, arms="hold", prop="document", coat=True)
-    text(ctx, "of tax relief?", 60, 600, SANS_BOLD, 50, INK)
-    pill(ctx, "Who qualifies?", 56, 626, CORAL, 34, WHITE, SANS_BOLD, pad_x=22)
+    text(ctx, "of tax relief?", 60, 600, HEAD, 50, INK)
+    pill(ctx, "Who qualifies?", 56, 626, CORAL, 32, WHITE, SANS_SEMI, pad_x=22)
     plan = CityPlan(760, 120, 470, 340, cols=5, rows=4, gap=7,
                     perimeter=((1, 0), (4, 0), (4, 2), (5, 2), (5, 4), (2, 4), (2, 3), (1, 3)))
     plan.draw(ctx)

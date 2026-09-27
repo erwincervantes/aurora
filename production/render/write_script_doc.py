@@ -6,7 +6,7 @@ import video_core as vc
 
 ON_SCREEN = {
     "hook": "A tax incentive can improve your return. / Can it fix a weak location? — four facades rise; the street goes quiet around the one carrying a 'Tax incentive' tag",
-    "promise": "El Salvador Tax Incentives — Who qualifies for up to 10 years of relief? — 01 which incentive applies · 02 who receives the benefit · 03 what remains after location and execution costs (with Spanish partner lines)",
+    "promise": "El Salvador Tax Incentives — Who qualifies for up to 10 years of relief? — 01 which incentive applies · 02 who receives the benefit · 03 what remains after location and execution costs",
     "opportunity": "Hero numeral counts 1→10 'years' with a reader seated on it and a ten-dot ruler; orange block map of the defined Historic Center (illustrative); 'Separate nationwide regimes' (Tourism, Free zones, International services); 'Not every business qualifies. Verify current law and regulation before underwriting.'",
     "checks": "Giant 3 'checks before you model any benefit': 1 Exact location (inside vs. one block outside) · 2 Qualifying investment (Food, Lodging, Culture, Housing, Restoration; tape-measure vs. minimum threshold) · 3 Approval (APLAN · Ventanilla Única; 'Qualified' stamp; 'No approval, no benefit to model.')",
     "beneficiary": "Which entity receives the benefit? — Owner · landlord / Operator · tenant / Developer; 'Landlord qualified ≠ tenant benefits automatically'",

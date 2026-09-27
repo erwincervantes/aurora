@@ -17,7 +17,7 @@ production/
               export_captions.py SRT export (asserts no overlapping captions)
               write_script_doc.py narration script document with timecodes
   svg/        editable vector keyframes per scene + thumbnail (Illustrator / Figma / Inkscape)
-  fonts/      Oswald + Work Sans (SIL OFL 1.1) and the static instances the renderer uses
+  fonts/      Fraunces, Geist, Geist Mono (SIL OFL 1.1) and the static instances the renderer uses
 ```
 
 ## Rebuild
@@ -25,7 +25,7 @@ production/
 ```bash
 pip install --break-system-packages pycairo numpy soundfile sherpa-onnx fonttools pillow
 apt-get install -y ffmpeg libcairo2-dev
-cd production/fonts && python3 make_font_instances.py && cp Aurora*.ttf ~/.fonts/ && fc-cache -f   # Oswald + Work Sans
+cd production/fonts && python3 make_font_instances.py && cp Aurora*.ttf ~/.fonts/ && fc-cache -f   # Fraunces, Geist, Geist Mono
 cd ../render
 export AURORA_TTS_MODEL_DIR=/path/to/kokoro-int8-en-v0_19   # see "Voice" below
 python3 narrate.py --script ../script/main_script.json       # --dry-run lists lines only
@@ -43,7 +43,7 @@ A full 16:9 render takes about 3 minutes on 4 CPU cores.
 ## Key settings
 
 - **Hypothetical economics** are named constants at the top of `main_video.py`: `ASSUMED_ANNUAL_TAX_SAVINGS`, `ADDITIONAL_AFTER_TAX_OCCUPANCY_COST` and the derived `REMAINING_ANNUAL_ADVANTAGE`. Chart heights, count-ups and labels all derive from them. An `assert` stops the render if the result stops matching the narrated $6,000.
-- **Visual system** is set in `aurora_gfx.py`: a flat, outline-free editorial style directed by the Madrid en Cifras 2020 reference spreads. It has an off-white page (#F1F1F4), indigo condensed hero numerals (#2D2B6E), coral section labels and hairline rules (#E5474E), italic grey Spanish partner lines, tall geometric figures, and an orange block map with white street gaps. The chart colors are blue #3A6BC8 for savings, coral #E5474E for costs and orange #F29A3A for what remains. They pass the colour-blind separation and lightness checks, and every bar carries a direct label. Type is Oswald 500/600 for numerals and Work Sans 400–700 plus Italic for text, both under SIL OFL 1.1 in `fonts/`.
+- **Visual system** is set in `aurora_gfx.py`: a flat, outline-free editorial style directed by the Madrid en Cifras 2020 reference spreads. It has an off-white page (#F1F1F4), indigo condensed hero numerals (#2D2B6E), coral section labels and hairline rules (#E5474E), italic grey secondary lines, tall geometric figures, and an orange block map with white street gaps. The chart colors are blue #3A6BC8 for savings, coral #E5474E for costs and orange #F29A3A for what remains. They pass the colour-blind separation and lightness checks, and every bar carries a direct label. Logo and type follow The Aurora Standard v5 (DS-AUR-005). The logo is the locked lockup: a mark of twelve heritage-spectrum ticks on a faint ring, plus the wordmark "aur*o*ra" in Fraunces 300 (opsz 144, SOFT 20). The italic "o" is amber-dark #8A5E27 on light backgrounds and amber-light #D9AE7A on dark; the wordmark is ink #1A2236 on light and cream on dark, never recoloured. Fraunces 330/340 carries headlines and hero numerals; Geist 400/500/600 carries text and UI; Geist Mono 500 carries labels, folios and axis values. There is one Fraunces wonky-italic emphasis per view at most. All fonts are SIL OFL 1.1, in `fonts/`.
 - **Pacing** is set per script in `pacing` (lead-in and gaps) and `voice.speed`.
 - **Loudness targets** are `TARGET_LUFS = -14`, `TARGET_TRUE_PEAK = -1.5` in `video_core.py`.
 

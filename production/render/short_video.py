@@ -13,8 +13,7 @@ import video_core as vc
 W, H = 1080, 1920
 LEFT, RIGHT = 80, 1000
 CAPTION_ZONE = (80, 1360, 960, 1548)
-SECTIONS = {"s_hook": ("The question", "La pregunta"), "s_zone": ("The zone", "La zona"),
-            "s_checks": ("Three checks", "Tres verificaciones"), "s_benef": ("Who benefits", "¿Quién se beneficia?")}
+SECTIONS = {"s_hook": "The question", "s_zone": "The zone", "s_checks": "Three checks", "s_benef": "Who benefits"}
 
 
 class ShortFilm(vc.Film):
@@ -37,16 +36,16 @@ class ShortFilm(vc.Film):
         QC.width, QC.height, QC.caption_zone, QC.safe_margin = W, H, CAPTION_ZONE if self.captions_on else None, 60
         scene = self.current_scene(t)
         dark = scene == "s_close" and t > self.scenes["s_close"]["start"] + 0.1
-        set_color(ctx, INK if dark else PAGE)
+        set_color(ctx, LOGO_INK if dark else PAGE)
         ctx.paint()
         if not dark:
             a = ease_out(prog(t, 0.1, 0.5))
             wordmark(ctx, LEFT, 132, 36, alpha=a)
             index = [s["id"] for s in self.timeline["scenes"]].index(scene) + 1
-            text(ctx, f"{index:02d} | {len(self.timeline['scenes']):02d}", RIGHT, 132, NUM_MED, 30, INK, "right", a)
+            text(ctx, f"{index:02d} | {len(self.timeline['scenes']):02d}", RIGHT, 132, MONO, 26, INK, "right", a)
             line(ctx, [(LEFT, 162), (LEFT + (RIGHT - LEFT) * ease_out(prog(t, 0.1, 1.0)), 162)], CORAL, 1.6, alpha=a)
             if scene in SECTIONS:
-                section(ctx, t, self.scenes[scene]["start"] + 0.2, *SECTIONS[scene], x=LEFT, y=226)
+                section(ctx, t, self.scenes[scene]["start"] + 0.2, SECTIONS[scene], x=LEFT, y=226)
         getattr(self, scene)(ctx, t)
         vc.draw_transition(ctx, t, self.boundaries, W, H)
         if self.captions_on:
@@ -56,7 +55,7 @@ class ShortFilm(vc.Film):
     def s_hook(self, ctx, t):
         l0, l1 = self.line("s_hook", 0), self.line("s_hook", 1)
         a, dy = rise(t, l0["start"])
-        text(ctx, "Up to", LEFT, 360 + dy, SANS_BOLD, 60, INK, alpha=a)
+        text(ctx, "Up to", LEFT, 360 + dy, HEAD, 60, INK, alpha=a)
         count = 1 + int(9 * ease_in_out(prog(t, phrase_time(l0, "ten years") - 0.3, 1.0)))
         size, baseline = 440, 800
         big_number(ctx, str(count), LEFT - 10, baseline + dy, size, INK, alpha=a)
@@ -73,7 +72,7 @@ class ShortFilm(vc.Film):
             line(ctx, [(x, 840), (x, 840 - 18 * yp)], CORAL, 2.4)
             disc(ctx, x, 834 - 18 * yp, 6 * yp, CORAL)
         line(ctx, [(LEFT, 840), (LEFT + 828 * ease_out(prog(t, 0.8, 1.2)), 840)], CORAL, 1.6)
-        text(ctx, "of tax relief?", LEFT, 940 + dy, SANS_BOLD, 64, INK, alpha=a)
+        text(ctx, "of tax relief?", LEFT, 940 + dy, HEAD, 64, INK, alpha=a)
         answers = [(phrase_time(l1, "For qualifying"), "Qualifying investments", "Potentially", "check"),
                    (phrase_time(l1, "For every"), "Every business", "No", "cross")]
         for k, (start, who, verdict, kind) in enumerate(answers):
@@ -89,7 +88,7 @@ class ShortFilm(vc.Film):
     # ------------------------------------------------------------ zone
     def s_zone(self, ctx, t):
         l0 = self.line("s_zone", 0)
-        text_block(ctx, "One defined Historic Center, not the whole country", LEFT, 350, SANS_BOLD, 62, INK, 900,
+        text_block(ctx, "One defined Historic Center, not the whole country", LEFT, 350, HEAD, 62, INK, 900,
                    1.12, p=prog(t, l0["start"], 1.2))
         plan = CityPlan(LEFT, 540, 920, 620, cols=6, rows=6, gap=9,
                         perimeter=((1, 1), (5, 1), (5, 3), (6, 3), (6, 5), (2, 5), (2, 4), (1, 4)))
@@ -97,16 +96,15 @@ class ShortFilm(vc.Film):
         la = ease_out(prog(t, phrase_time(l0, "defined Historic"), 0.5))
         if la > 0:
             pointer(ctx, LEFT, 1204, 20, CORAL, la)
-            text(ctx, "Centro Histórico de San Salvador", LEFT + 32, 1222, SANS_SEMI, 34, INK, alpha=la)
-            text(ctx, "Illustrative, not the legal map", LEFT + 32, 1264, ITAL, 30, GREY, alpha=la)
+            text(ctx, "San Salvador Historic Center", LEFT + 32, 1222, SANS_SEMI, 34, INK, alpha=la)
+            text(ctx, "Illustrative, not the legal map", LEFT + 32, 1264, SUB, 30, GREY, alpha=la)
 
     # ------------------------------------------------------------ checks
     def s_checks(self, ctx, t):
         lines = [self.line("s_checks", i) for i in range(4)]
         a, dy = rise(t, lines[0]["start"])
         big_number(ctx, "3", LEFT - 6, 560 + dy, 300, INK, alpha=a)
-        text(ctx, "checks", LEFT + 190, 470 + dy, SANS_BOLD, 64, INK, alpha=a)
-        text(ctx, "verificaciones", LEFT + 190, 520 + dy, ITAL, 32, GREY, alpha=a)
+        text(ctx, "checks", LEFT + 190, 470 + dy, HEAD, 64, INK, alpha=a)
         rows = [("Location", "Inside the defined perimeter"), ("Investment", "Eligible activity, above the minimum"),
                 ("Approval", "Qualified by the Planning Authority")]
         for i, (title, sub) in enumerate(rows):
@@ -121,7 +119,7 @@ class ShortFilm(vc.Film):
             else:
                 marker(ctx, LEFT + 34, y, 34, i + 1, mix(RULE, CORAL, active), appear)
             text(ctx, title, LEFT + 92, y + 4, SANS_SEMI, 42, INK, alpha=appear * (0.45 + 0.55 * max(active, done)))
-            text(ctx, sub, LEFT + 92, y + 44, ITAL, 29, GREY, alpha=appear)
+            text(ctx, sub, LEFT + 92, y + 44, SUB, 29, GREY, alpha=appear)
         for k in range(3):
             start = lines[k + 1]["start"]
             p = prog(t, start, 0.55)
@@ -161,7 +159,7 @@ class ShortFilm(vc.Film):
                     text(ctx, "APLAN", LEFT + 400, 1110, NUM, 84, INK, alpha=fade)
                     text(ctx, "Historic Center", LEFT + 400, 1164, SANS_MED, 32, INK, alpha=fade)
                     text(ctx, "Planning Authority", LEFT + 400, 1204, SANS_MED, 32, INK, alpha=fade)
-                    text(ctx, "Ventanilla Única", LEFT + 400, 1246, ITAL, 30, GREY, alpha=fade)
+                    text(ctx, "Single window", LEFT + 400, 1246, SUB, 30, GREY, alpha=fade)
             if 0 < e < 1:
                 line(ctx, [(LEFT - 10 + 940 * e, 995), (LEFT - 10 + 940 * e, 1335)], CORAL, 2.4)
 
@@ -169,14 +167,13 @@ class ShortFilm(vc.Film):
     def s_benef(self, ctx, t):
         l0 = self.line("s_benef", 0)
         a, dy = rise(t, l0["start"])
-        text(ctx, "Who receives it?", LEFT, 350 + dy, SANS_BOLD, 76, INK, alpha=a)
-        text(ctx, "¿Quién lo recibe?", LEFT, 400 + dy, ITAL, 34, GREY, alpha=a)
+        text(ctx, "Who receives it?", LEFT, 350 + dy, HEAD, 76, INK, alpha=a)
         resolve = phrase_time(l0, "A landlord")
-        groups = [("Owner · landlord", "Propietario", INK, SKY, {"prop": "keys", "arms": "hold"}, "check"),
-                  ("Operator · tenant", "Operador · inquilino", WHITE, PURPLE,
+        groups = [("Owner · landlord", INK, SKY, {"prop": "keys", "arms": "hold"}, "check"),
+                  ("Operator · tenant", WHITE, PURPLE,
                    {"coat": True, "arms": "present", "hair_style": "bun"}, "cross"),
-                  ("Developer", "Desarrollador", SKY, INK, {"hardhat": True, "arms": "point"}, "question")]
-        for i, (title, spanish, top, bottom_c, pose, final) in enumerate(groups):
+                  ("Developer", SKY, INK, {"hardhat": True, "arms": "point"}, "question")]
+        for i, (title, top, bottom_c, pose, final) in enumerate(groups):
             y = 470 + i * 215
             start = l0["start"] + 0.3 + i * 0.25
             ra, rdy = rise(t, start)
@@ -188,15 +185,14 @@ class ShortFilm(vc.Film):
             ctx.clip()
             person(ctx, LEFT + 100, y + 190 + rdy, 175, top, bottom_c, GOLD if i == 0 else CORAL, alpha=ra, **pose)
             ctx.restore()
-            text(ctx, title, LEFT + 210, y + 92 + rdy, SANS_SEMI, 44, INK, alpha=ra)
-            text(ctx, spanish, LEFT + 210, y + 136 + rdy, ITAL, 30, GREY, alpha=ra)
+            text(ctx, title, LEFT + 210, y + 112 + rdy, SANS_SEMI, 44, INK, alpha=ra)
             kind = final if t > resolve + 0.25 * i else "question"
             bstart = start + 0.2 if kind == "question" else resolve + 0.25 * i
             badge(ctx, LEFT + 850, y + 97 + rdy, 36, kind, prog(t, bstart, 0.8))
         na, ndy = rise(t, phrase_time(l0, "automatically"))
         if na > 0:
             rect(ctx, LEFT, 1135 + ndy, 920, 180, CORAL, na, radius=12)
-            text(ctx, "Landlord approved ≠", LEFT + 40, 1208 + ndy, SANS_BOLD, 50, WHITE, alpha=na)
+            text(ctx, "Landlord approved ≠", LEFT + 40, 1208 + ndy, HEAD, 50, WHITE, alpha=na)
             text(ctx, "tenant benefits automatically", LEFT + 40, 1270 + ndy, SANS, 44, WHITE, alpha=na)
 
     # ------------------------------------------------------------ close
@@ -204,13 +200,12 @@ class ShortFilm(vc.Film):
         s = self.scenes["s_close"]["start"]
         l0 = self.line("s_close", 0)
         a = ease_out(prog(t, s + 0.3, 0.6))
-        wordmark(ctx, W / 2, 380, 120, color=WHITE, fill=ORANGE, alpha=a, align="center")
-        text(ctx, "LATIN AMERICA EXPANSION", W / 2, 448, SANS_SEMI, 28, CORAL, "center", a, tracking=3)
-        text(ctx, "Expansión en América Latina", W / 2, 490, ITAL, 28, SKY, "center", a)
+        wordmark(ctx, W / 2, 390, 104, reverse=True, alpha=a, align="center")
+        text(ctx, "LATIN AMERICA EXPANSION", W / 2, 494, MONO, 24, CORAL, "center", a, tracking=3)
         sp = prog(t, l0["start"] + 0.1, 0.6)
         if sp > 0:
-            with pop(ctx, W / 2, 596, sp):
-                pill(ctx, "Subscribe", W / 2, 560, ORANGE, 40, INK, SANS_BOLD, pad_x=56, align="center")
+            with pop(ctx, W / 2, 598, sp):
+                pill(ctx, "Subscribe", W / 2, 564, ORANGE, 38, LOGO_INK, SANS_SEMI, pad_x=56, align="center")
         text(ctx, "@ConAurora", W / 2, 706, SANS_MED, 38, WHITE, "center", alpha=rise(t, l0["start"] + 0.5)[0])
         np_ = prog(t, phrase_time(l0, "the next breakdown") - 0.2, 0.6)
         if np_ > 0:
@@ -219,7 +214,7 @@ class ShortFilm(vc.Film):
                 na = ease_out(prog(t, phrase_time(l0, "the next breakdown"), 0.5))
                 text(ctx, "NEXT BREAKDOWN", LEFT + 50, 836, SANS_SEMI, 26, CORAL, alpha=na, tracking=2)
                 text_block(ctx, "Who actually gets the benefit: owner, operator, or developer?", LEFT + 50, 906,
-                           SANS_BOLD, 52, INK, 820, 1.14, alpha=na)
+                           HEAD, 52, INK, 820, 1.14, alpha=na)
                 for k, (top, bottom_c, kw) in enumerate(((INK, SKY, {"prop": "keys", "arms": "hold"}),
                                                         (WHITE, PURPLE, {"coat": True, "hair_style": "bun"}),
                                                         (SKY, INK, {"hardhat": True, "arms": "point", "facing": -1}))):

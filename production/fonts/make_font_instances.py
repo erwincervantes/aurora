@@ -1,18 +1,25 @@
 """Build the static font instances the renderer uses (run from this folder), then install to ~/.fonts.
 
-Oswald (condensed numerals, the hero figures) + Work Sans roman/italic (headings, labels, bilingual lines).
-Both SIL OFL 1.1, no Reserved Font Names; renamed instances are permitted.
+Per The Aurora Standard v5 (DS-AUR-005, chapter 04): Fraunces carries voice, headlines and hero numerals;
+Geist carries every word of running text and UI; Geist Mono labels data. All SIL OFL 1.1, no Reserved
+Font Names, so renamed static instances are permitted.
 """
 from fontTools.ttLib import TTFont
 from fontTools.varLib.instancer import instantiateVariableFont
 
-SPECS = [("Oswald[wght].ttf", "AuroraNumSemi", {"wght": 600}),
-         ("Oswald[wght].ttf", "AuroraNumMed", {"wght": 500}),
-         ("WorkSans[wght].ttf", "AuroraSansReg", {"wght": 400}),
-         ("WorkSans[wght].ttf", "AuroraSansMed", {"wght": 500}),
-         ("WorkSans[wght].ttf", "AuroraSansSemi", {"wght": 600}),
-         ("WorkSans[wght].ttf", "AuroraSansBold", {"wght": 700}),
-         ("WorkSans-Italic[wght].ttf", "AuroraSansItal", {"wght": 400})]
+FRAUNCES = "Fraunces[SOFT,WONK,opsz,wght].ttf"
+FRAUNCES_ITALIC = "Fraunces-Italic[SOFT,WONK,opsz,wght].ttf"
+SPECS = [
+    (FRAUNCES, "AuroraSerifDisplay", {"wght": 330, "opsz": 144, "SOFT": 0, "WONK": 0}),     # display token
+    (FRAUNCES, "AuroraSerifHead", {"wght": 340, "opsz": 144, "SOFT": 0, "WONK": 0}),        # h2 / lead tokens
+    (FRAUNCES, "AuroraWordmark", {"wght": 300, "opsz": 144, "SOFT": 20, "WONK": 0}),        # .lockup .wordmark
+    (FRAUNCES_ITALIC, "AuroraWordmarkItal", {"wght": 300, "opsz": 144, "SOFT": 20, "WONK": 0}),  # the amber "o"
+    (FRAUNCES_ITALIC, "AuroraSerifWonk", {"wght": 340, "opsz": 144, "SOFT": 100, "WONK": 1}),    # --wonk emphasis
+    ("Geist[wght].ttf", "AuroraGeistReg", {"wght": 400}),
+    ("Geist[wght].ttf", "AuroraGeistMed", {"wght": 500}),
+    ("Geist[wght].ttf", "AuroraGeistSemi", {"wght": 600}),
+    ("GeistMono[wght].ttf", "AuroraMono", {"wght": 500}),
+]
 
 for source, family, location in SPECS:
     font = instantiateVariableFont(TTFont(source), location)

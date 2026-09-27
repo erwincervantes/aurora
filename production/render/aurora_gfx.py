@@ -1,7 +1,7 @@
 """Aurora editorial illustration toolkit (pycairo) — flat 'facts & figures' style.
 
 Look: cool off-white page, indigo condensed numerals as heroes, coral section labels and rules,
-italic grey secondary lines, flat outline-free figures and facades, orange block maps with
+grey secondary lines, flat outline-free figures and facades, orange block maps with
 white street lines and small numbered markers. Everything is original vector drawing.
 """
 import math
@@ -37,13 +37,25 @@ PURPLE = hex_rgb("#7C5AA0")
 SKIN = hex_rgb("#F2A08C")
 DARK = hex_rgb("#2A2438")      # hair, shoes
 
-NUM = "AuroraNumSemi"          # Oswald 600: hero numerals
-NUM_MED = "AuroraNumMed"       # Oswald 500
-SANS = "AuroraSansReg"         # Work Sans 400
-SANS_MED = "AuroraSansMed"     # Work Sans 500
-SANS_SEMI = "AuroraSansSemi"   # Work Sans 600
-SANS_BOLD = "AuroraSansBold"   # Work Sans 700
-ITAL = "AuroraSansItal"        # Work Sans Italic 400: secondary / Spanish lines
+# Type per The Aurora Standard v5 (chapter 04): Fraunces = voice/headlines/numerals, Geist = text/UI,
+# Geist Mono = labels and data. Italic is emphasis, not texture: WONK is used at most once per view.
+NUM = "AuroraSerifDisplay"     # Fraunces 330, opsz 144: hero numerals (display token)
+NUM_MED = "AuroraSerifDisplay"
+HEAD = "AuroraSerifHead"       # Fraunces 340: headlines (h2 / lead tokens)
+WONK = "AuroraSerifWonk"       # Fraunces italic, opsz 144 SOFT 100 WONK 1: the single emphasis per view
+SANS = "AuroraGeistReg"        # Geist 400: body
+SANS_MED = "AuroraGeistMed"    # Geist 500
+SANS_SEMI = "AuroraGeistSemi"  # Geist 600: small uppercase subheads, UI emphasis
+SUB = "AuroraGeistReg"         # secondary lines (set plainly, in grey)
+MONO = "AuroraMono"            # Geist Mono 500: labels, folios, axis values
+
+# Logo colours are locked by the design system (misuse rule: never recolour the wordmark or aperture).
+LOGO_INK = hex_rgb("#1A2236")
+LOGO_CREAM = hex_rgb("#FAF7F1")
+AMBER_DK = hex_rgb("#8A5E27")
+AMBER_LT = hex_rgb("#D9AE7A")
+HERITAGE = [hex_rgb(h) for h in ("#2CA354", "#6BBE50", "#6EC6AF", "#3B5FAA", "#BF97C5", "#ED2C6D",
+                                 "#EE4137", "#EF4937", "#F58634", "#F8DF26", "#2CA354", "#6BBE50")]
 
 HAIR = 1.6                     # hairline weight for rules, grids, cranes
 
@@ -302,25 +314,26 @@ def rise(t, start, duration=0.55):
     p = ease_out(prog(t, start, duration))
     return p, (1 - p) * 18
 
-def section(ctx, t, start, english, spanish, x=140, y=196, align="left"):
-    """Coral uppercase section label with its italic grey Spanish partner line."""
+def section(ctx, t, start, label, secondary=None, x=140, y=196, align="left"):
+    """Coral uppercase section label, with an optional italic secondary line."""
     a, dy = rise(t, start)
     if a <= 0:
         return
-    text(ctx, english.upper(), x, y + dy, SANS_SEMI, 22, CORAL, align, a, tracking=1.2)
-    text(ctx, spanish, x, y + 30 + dy, ITAL, 22, CORAL, align, a * 0.75)
+    text(ctx, label.upper(), x, y + dy, MONO, 20, CORAL, align, a, tracking=2.0)
+    if secondary:
+        text(ctx, secondary, x, y + 30 + dy, SUB, 22, CORAL, align, a * 0.75)
 
-def pair(ctx, english, spanish, x, y, size=26, face=SANS, alpha=1.0, align="left", max_width=None, color=INK):
-    """Primary line + italic grey secondary line (the bilingual label pairing). Returns bottom baseline."""
+def pair(ctx, primary, secondary, x, y, size=26, face=SANS, alpha=1.0, align="left", max_width=None, color=INK):
+    """Primary line + optional italic grey secondary line. Returns bottom baseline."""
     if max_width:
-        y = text_block(ctx, english, x, y, face, size, color, max_width, 1.22, align, alpha)
+        y = text_block(ctx, primary, x, y, face, size, color, max_width, 1.22, align, alpha)
     else:
-        text(ctx, english, x, y, face, size, color, align, alpha)
-    if spanish:
+        text(ctx, primary, x, y, face, size, color, align, alpha)
+    if secondary:
         y2 = y + size * 1.25
         if max_width:
-            return text_block(ctx, spanish, x, y2, ITAL, size * 0.92, GREY, max_width, 1.22, align, alpha)
-        text(ctx, spanish, x, y2, ITAL, size * 0.92, GREY, align, alpha)
+            return text_block(ctx, secondary, x, y2, SUB, size * 0.92, GREY, max_width, 1.22, align, alpha)
+        text(ctx, secondary, x, y2, SUB, size * 0.92, GREY, align, alpha)
         return y2
     return y
 
@@ -684,27 +697,42 @@ def utility_pole(ctx, x, base, h, p=1.0, sway=0.0):
             line(ctx, partial_polyline(pts, clamp((p - 0.6) / 0.4)), INK, 1.4)
         disc(ctx, x + h * dx, base - h * 0.9, h * 0.024, GOLD)
 
-def aurora_mark(ctx, cx, base_y, r, fill=ORANGE, horizon=INK):
-    """Original wordmark glyph: a rising half-sun on a horizon (aurora = dawn)."""
+def aurora_mark(ctx, cx, cy, size, reverse=False):
+    """The locked Aurora mark (DS-AUR-005 §2): twelve heritage-spectrum ticks on a faint ring.
+    Drawn from the 72-unit master: ring r28, ticks from r22 to r30, stroke 5.5, round caps."""
+    k = size / 72.0
+    ctx.save()
+    ctx.translate(cx, cy)
     ctx.new_path()
-    ctx.arc(cx, base_y, r, math.pi, 2 * math.pi)
-    ctx.close_path()
-    set_color(ctx, fill)
-    ctx.fill()
-    line(ctx, [(cx - r * 1.35, base_y + r * 0.08), (cx + r * 1.35, base_y + r * 0.08)], horizon, max(2, r * 0.14),
-         cap=cairo.LINE_CAP_BUTT)
+    ctx.arc(0, 0, 28 * k, 0, 2 * math.pi)
+    set_color(ctx, LOGO_CREAM if reverse else LOGO_INK, 0.18 if reverse else 0.14)
+    ctx.set_line_width(max(1.0, 1 * k))
+    ctx.stroke()
+    for i, color in enumerate(HERITAGE):
+        angle = math.radians(i * 30)
+        s, c = math.sin(angle), -math.cos(angle)
+        line(ctx, [(s * 22 * k, c * 22 * k), (s * 30 * k, c * 30 * k)], color, 5.5 * k)
+    ctx.restore()
 
-def wordmark(ctx, x, y, size, color=INK, fill=ORANGE, alpha=1.0, align="left"):
-    """'Aurora' text wordmark with the dawn glyph. y is the baseline. Returns total width."""
-    r = size * 0.36
-    word_w = text_width(ctx, "Aurora", SANS_BOLD, size)
-    total = r * 2.7 + size * 0.26 + word_w
+def wordmark(ctx, x, y, size, reverse=False, alpha=1.0, align="left", mark=True):
+    """Aurora lockup: mark + 'aur·o·ra' in Fraunces 300 (opsz 144, SOFT 20), italic amber 'o'.
+    y is the text baseline; proportions follow the reference lockup (mark 104 : wordmark 62, gap 22)."""
+    ink = LOGO_CREAM if reverse else LOGO_INK
+    amber = AMBER_LT if reverse else AMBER_DK
+    mark_size = size * 104 / 62 if mark else 0
+    gap = size * 22 / 62 if mark else 0
+    parts = [("aur", "AuroraWordmark", ink), ("o", "AuroraWordmarkItal", amber), ("ra", "AuroraWordmark", ink)]
+    word_w = sum(text_width(ctx, s, face, size) for s, face, _ in parts)
+    total = mark_size + gap + word_w
     if align == "center":
         x -= total / 2
     ctx.save()
     ctx.push_group()
-    aurora_mark(ctx, x + r * 1.35, y - size * 0.06, r, fill, color)
-    text(ctx, "Aurora", x + r * 2.7 + size * 0.26, y, SANS_BOLD, size, color, label="wordmark")
+    if mark:
+        aurora_mark(ctx, x + mark_size / 2, y - size * 0.3, mark_size, reverse)
+    cursor = x + mark_size + gap
+    for s, face, color in parts:
+        cursor += text(ctx, s, cursor, y, face, size, color, label="wordmark")
     ctx.pop_group_to_source()
     ctx.paint_with_alpha(alpha)
     ctx.restore()

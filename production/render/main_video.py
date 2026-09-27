@@ -21,14 +21,9 @@ ADDITIONAL_AFTER_TAX_OCCUPANCY_COST = 24_000
 REMAINING_ANNUAL_ADVANTAGE = ASSUMED_ANNUAL_TAX_SAVINGS - ADDITIONAL_AFTER_TAX_OCCUPANCY_COST
 assert REMAINING_ANNUAL_ADVANTAGE == 6_000, "narration and on-screen arithmetic say $6,000"
 
-SECTIONS = {  # scene id -> (English label, Spanish partner line)
-    "hook": ("The question", "La pregunta"),
-    "promise": ("In this film", "En este video"),
-    "opportunity": ("The opportunity", "La oportunidad"),
-    "checks": ("Three checks", "Tres verificaciones"),
-    "beneficiary": ("Who benefits", "¿Quién se beneficia?"),
-    "economics": ("The arithmetic", "La aritmética"),
-    "execution": ("Execution", "Ejecución"),
+SECTIONS = {  # scene id -> coral section label
+    "hook": "The question", "promise": "In this film", "opportunity": "The opportunity", "checks": "Three checks",
+    "beneficiary": "Who benefits", "economics": "The arithmetic", "execution": "Execution",
 }
 
 
@@ -54,7 +49,7 @@ class MainFilm(vc.Film):
         QC.width, QC.height, QC.caption_zone = W, H, CAPTION_ZONE if self.captions_on else None
         scene = self.current_scene(t)
         dark = scene == "close" and t > self.scenes["close"]["start"] + 0.1
-        set_color(ctx, INK if dark else PAGE)
+        set_color(ctx, LOGO_INK if dark else PAGE)
         ctx.paint()
         if not dark:
             self.header(ctx, t, scene)
@@ -68,23 +63,22 @@ class MainFilm(vc.Film):
         a = ease_out(prog(t, 0.1, 0.6))
         wordmark(ctx, LEFT, 82, 28, alpha=a)
         index = [s["id"] for s in self.timeline["scenes"]].index(scene) + 1
-        folio_w = text(ctx, f"{index:02d} | {len(self.timeline['scenes']):02d}", RIGHT, 82, NUM_MED, 24, INK, "right", a)
-        text(ctx, "El Salvador Tax Incentives — 2026", RIGHT - folio_w - 28, 81, ITAL, 20, INK, "right", a)
+        folio_w = text(ctx, f"{index:02d} | {len(self.timeline['scenes']):02d}", RIGHT, 82, MONO, 20, INK, "right", a)
+        text(ctx, "El Salvador Tax Incentives — 2026", RIGHT - folio_w - 28, 81, SUB, 20, INK, "right", a)
         line(ctx, [(LEFT, 106), (LEFT + (RIGHT - LEFT) * ease_out(prog(t, 0.2, 1.2)), 106)], CORAL, 1.4, alpha=a)
         if scene in SECTIONS:
-            section(ctx, t, self.scenes[scene]["start"] + 0.25, *SECTIONS[scene])
+            section(ctx, t, self.scenes[scene]["start"] + 0.25, SECTIONS[scene])
 
     # ------------------------------------------------------------ 1. hook
     def scene_hook(self, ctx, t):
         l0, l1 = self.line("hook", 0), self.line("hook", 1)
         a, dy = rise(t, l0["start"])
-        bottom = text_block(ctx, "A tax incentive can improve your return.", LEFT, 360 + dy, SANS_BOLD, 64, INK, 700,
+        bottom = text_block(ctx, "A tax incentive can improve your return.", LEFT, 360 + dy, HEAD, 64, INK, 700,
                             leading=1.14, alpha=a)
         a2, dy2 = rise(t, l1["start"])
         y2 = bottom + 130 + dy2
-        text(ctx, "Can it fix a", LEFT, y2, SANS_BOLD, 64, INK, alpha=a2)
-        text(ctx, "weak location?", LEFT, y2 + 74, SANS_BOLD, 64, CORAL, alpha=a2)
-        text(ctx, "¿Puede un incentivo salvar una mala ubicación?", LEFT, y2 + 132, ITAL, 26, GREY, alpha=a2)
+        text(ctx, "Can it fix a", LEFT, y2, HEAD, 64, INK, alpha=a2)
+        text(ctx, "weak location?", LEFT, y2 + 74, WONK, 66, CORAL, alpha=a2)
         # street: four facades rise; at "weak location" the street goes quiet around the one with the tag
         weak = ease_in_out(prog(t, phrase_time(l1, "weak location"), 1.2))
         ground = 800
@@ -120,13 +114,13 @@ class MainFilm(vc.Film):
         s = self.scenes["promise"]["start"]
         ln = self.line("promise", 0)
         a, dy = rise(t, s + 0.3)
-        text(ctx, "El Salvador Tax Incentives", LEFT, 330 + dy, SANS_BOLD, 76, INK, alpha=a)
+        text(ctx, "El Salvador Tax Incentives", LEFT, 330 + dy, HEAD, 76, INK, alpha=a)
         a2, dy2 = rise(t, s + 0.6)
-        text(ctx, "Who qualifies for up to 10 years of relief?", LEFT, 392 + dy2, ITAL, 40, INK, alpha=a2)
-        items = [("which incentive applies", "Which incentive applies", "¿Qué incentivo aplica?"),
-                 ("who receives the benefit", "Who receives the benefit", "¿Quién recibe el beneficio?"),
-                 ("what remains", "What remains after location and execution costs", "¿Qué queda después de los costos?")]
-        for i, (phrase, label, spanish) in enumerate(items):
+        text(ctx, "Who qualifies for up to 10 years of relief?", LEFT, 392 + dy2, SUB, 40, INK, alpha=a2)
+        items = [("which incentive applies", "Which incentive applies"),
+                 ("who receives the benefit", "Who receives the benefit"),
+                 ("what remains", "What remains after location and execution costs")]
+        for i, (phrase, label) in enumerate(items):
             start = phrase_time(ln, phrase) - 0.2
             x = LEFT + i * 560
             na, ndy = rise(t, start)
@@ -153,7 +147,7 @@ class MainFilm(vc.Film):
                     else:
                         rect(ctx, bx, base - bh * bp, 60, bh * bp, color)
             line(ctx, [(x, 686), (x + 480 * ease_out(prog(t, start + 0.1, 0.6)), 686)], CORAL, 1.4)
-            pair(ctx, label, spanish, x, 734, 30, SANS_SEMI, alpha=ease_out(prog(t, start + 0.2, 0.5)), max_width=470)
+            text_block(ctx, label, x, 734, SANS_SEMI, 30, INK, 470, 1.22, alpha=ease_out(prog(t, start + 0.2, 0.5)))
 
     # ------------------------------------------------------------ 3. opportunity
     def scene_opportunity(self, ctx, t):
@@ -184,9 +178,9 @@ class MainFilm(vc.Film):
         da = ease_out(prog(t, phrase_time(l0, "qualifying new"), 0.6)) * (1 - swap)
         if da > 0:
             pair(ctx, "of income-tax relief, at most, for qualifying new investments in the defined Historic Center.",
-                 "Exención del Impuesto sobre la Renta hasta por 10 años.", LEFT, 728, 27, SANS, da, max_width=640)
+                 None, LEFT, 728, 27, SANS, da, max_width=640)
         if swap > 0:
-            text(ctx, "Not every business qualifies.", LEFT, 744, SANS_BOLD, 38, CORAL, alpha=swap)
+            text(ctx, "Not every business qualifies.", LEFT, 744, HEAD, 38, CORAL, alpha=swap)
             text_block(ctx, "Verify current law and regulation before underwriting.", LEFT, 792, SANS, 27, INK, 640, alpha=swap)
         # the defined zone
         plan = CityPlan(900, 180, 880, 500)
@@ -194,8 +188,8 @@ class MainFilm(vc.Film):
         la = ease_out(prog(t, phrase_time(l0, "defined Historic") + 0.8, 0.5))
         if la > 0:
             pointer(ctx, 900, 712, 16, CORAL, la)
-            text(ctx, "Centro Histórico de San Salvador", 926, 726, SANS_SEMI, 24, INK, alpha=la)
-            text(ctx, "Defined perimeter — illustrative, not the legal map", 926, 756, ITAL, 22, GREY, alpha=la)
+            text(ctx, "San Salvador Historic Center", 926, 726, SANS_SEMI, 24, INK, alpha=la)
+            text(ctx, "Defined perimeter — illustrative, not the legal map", 926, 756, SUB, 22, GREY, alpha=la)
         ra = ease_out(prog(t, phrase_time(l1, "separate from"), 0.5))
         if ra > 0:
             text(ctx, "Separate nationwide regimes, separate rules:", 900, 812, SANS_MED, 22, INK, alpha=ra)
@@ -212,8 +206,7 @@ class MainFilm(vc.Film):
         lines = [self.line("checks", i) for i in range(4)]
         a, dy = rise(t, lines[0]["start"])
         big_number(ctx, "3", LEFT - 6, 560 + dy, 330, INK, alpha=a)
-        text_block(ctx, "checks before you model any benefit", LEFT + 190, 400 + dy, SANS_BOLD, 40, INK, 470, 1.15, alpha=a)
-        text(ctx, "verificaciones antes de modelar", LEFT + 190, 520 + dy, ITAL, 24, GREY, alpha=a)
+        text_block(ctx, "checks before you model any benefit", LEFT + 190, 400 + dy, HEAD, 40, INK, 470, 1.15, alpha=a)
         rows = [("Exact location", "Inside the defined perimeter"),
                 ("Qualifying investment", "Eligible activity, above the minimum"),
                 ("Approval", "Qualified by the Planning Authority (APLAN)")]
@@ -229,7 +222,7 @@ class MainFilm(vc.Film):
             else:
                 marker(ctx, LEFT + 26, y, 26, i + 1, mix(RULE, CORAL, active), appear)
             text(ctx, title, LEFT + 70, y + 2, SANS_SEMI, 30, INK, alpha=appear * (0.45 + 0.55 * max(active, done)))
-            text(ctx, sub, LEFT + 70, y + 36, ITAL, 23, GREY, alpha=appear)
+            text(ctx, sub, LEFT + 70, y + 36, SUB, 23, GREY, alpha=appear)
         # right: one illustration per check, each wiping over the last behind a coral rule
         starts = [lines[1]["start"] - 1.2, lines[2]["start"], lines[3]["start"]]
         drawers = [self._check_location, self._check_investment, self._check_approval]
@@ -256,7 +249,7 @@ class MainFilm(vc.Film):
         la, lb = ease_out(prog(t, inside_t, 0.5)), ease_out(prog(t, outside_t, 0.5))
         if la > 0:
             pill(ctx, "Inside the perimeter", 900, 752, LIGHT, 23, alpha=la, dot=GOLD)
-            text(ctx, "Orange = defined zone (illustrative)", 900, 846, ITAL, 22, GREY, alpha=la)
+            text(ctx, "Orange = defined zone (illustrative)", 900, 846, SUB, 22, GREY, alpha=la)
         if lb > 0:
             pill(ctx, "One block outside", 1190, 752, LIGHT, 23, alpha=lb, dot=CORAL)
 
@@ -298,8 +291,8 @@ class MainFilm(vc.Film):
         l3 = lines[3]
         start = l3["start"]
         sa = ease_out(prog(t, start + 0.2, 0.5))
-        text(ctx, "APLAN · Ventanilla Única", 1340, 212, SANS_SEMI, 28, INK, "center", alpha=sa)
-        text(ctx, "Historic Center Planning Authority · single window", 1340, 246, ITAL, 22, GREY, "center", alpha=sa)
+        text(ctx, "APLAN · single window", 1340, 212, SANS_SEMI, 28, INK, "center", alpha=sa)
+        text(ctx, "Historic Center Planning Authority", 1340, 246, SUB, 22, GREY, "center", alpha=sa)
         line(ctx, [(1100, 266), (1100 + 480 * sa, 266)], CORAL, 1.4)
         person(ctx, 1640, 760, 330, WHITE, BLUE, coat=True, arms="hold", facing=-1, hair_style="bun",
                alpha=ease_out(prog(t, start + 0.3, 0.5)))
@@ -316,24 +309,23 @@ class MainFilm(vc.Film):
             stamp(ctx, dx + 150, dy + 170, 54, prog(t, phrase_time(l3, "the project") + 0.1, 0.8))
         na = ease_out(prog(t, phrase_time(l3, "No approval"), 0.5))
         if na > 0:
-            text(ctx, "No approval, no benefit to model.", 1520, 872, SANS_BOLD, 32, CORAL, "center", alpha=na)
+            text(ctx, "No approval, no benefit to model.", 1520, 872, HEAD, 32, CORAL, "center", alpha=na)
 
     # ------------------------------------------------------------ 5. beneficiary
     def scene_beneficiary(self, ctx, t):
         l0, l1, l2 = (self.line("beneficiary", i) for i in range(3))
         a, dy = rise(t, l0["start"])
-        text(ctx, "Which entity receives the benefit?", LEFT, 318 + dy, SANS_BOLD, 58, INK, alpha=a)
-        text(ctx, "¿Qué entidad recibe el beneficio?", LEFT, 364 + dy, ITAL, 28, GREY, alpha=a)
+        text(ctx, "Which entity receives the benefit?", LEFT, 318 + dy, HEAD, 58, INK, alpha=a)
         tp = prog(t, phrase_time(l0, "receives"), 0.6)
         if tp > 0:
             with pop(ctx, W / 2, 432, tp):
                 pill(ctx, "Qualified benefit", W / 2, 410, GOLD, 24, INK, SANS_SEMI, align="center")
-        groups = [("Owner · landlord", "Propietario", "Owner", 420),
-                  ("Operator · tenant", "Operador · inquilino", "operator", 960),
-                  ("Developer", "Desarrollador", "developer", 1500)]
+        groups = [("Owner · landlord", "Owner", 420),
+                  ("Operator · tenant", "operator", 960),
+                  ("Developer", "developer", 1500)]
         resolve = l2["start"]
         base = 800
-        for i, (title, spanish, cue, cx) in enumerate(groups):
+        for i, (title, cue, cx) in enumerate(groups):
             start = phrase_time(l1, cue)
             lp = prog(t, start - 0.3, 0.8)
             if lp > 0:
@@ -357,7 +349,6 @@ class MainFilm(vc.Film):
                        alpha=ease_out(prog(t, start + 0.3, 0.5)))
             la = ease_out(prog(t, start + 0.3, 0.5))
             text(ctx, title, cx, 846, SANS_SEMI, 30, INK, "center", alpha=la)
-            text(ctx, spanish, cx, 880, ITAL, 23, GREY, "center", alpha=la)
             kind = "question"
             if t > resolve + 0.4 and i == 0:
                 kind = "check"
@@ -377,7 +368,6 @@ class MainFilm(vc.Film):
         a, dy = rise(t, l0["start"])
         pointer(ctx, LEFT, 290 + dy, 16, CORAL, a)
         text(ctx, "Simplified hypothetical · annual, after tax", LEFT + 26, 304 + dy, SANS_SEMI, 26, INK, alpha=a)
-        text(ctx, "Hipotético simplificado · anual, después de impuestos", LEFT + 26, 336 + dy, ITAL, 22, GREY, alpha=a)
         t_save, t_minus, t_leaves = (phrase_time(l1, p) for p in ("Thirty", "minus", "leaves"))
         rows = [(t_save, 470, "", ASSUMED_ANNUAL_TAX_SAVINGS, BLUE, "Assumed tax savings"),
                 (t_minus, 610, "−", ADDITIONAL_AFTER_TAX_OCCUPANCY_COST, CORAL, "Additional after-tax occupancy costs")]
@@ -403,7 +393,7 @@ class MainFilm(vc.Film):
         for g in (0, 10_000, 20_000, 30_000):
             gy = base - g * scale
             line(ctx, partial_polyline([(1000, gy), (1780, gy)], ca), INK if g == 0 else RULE, 1.4)
-            text(ctx, f"${g // 1000}k" if g else "$0", 988, gy + 8, NUM_MED, 22, GREY, "right", alpha=ca)
+            text(ctx, f"${g // 1000}k" if g else "$0", 988, gy + 7, MONO, 18, GREY, "right", alpha=ca)
         bars = [(1040, t_save, 0, ASSUMED_ANNUAL_TAX_SAVINGS, BLUE, "Assumed tax savings"),
                 (1300, t_minus, REMAINING_ANNUAL_ADVANTAGE, ASSUMED_ANNUAL_TAX_SAVINGS, CORAL, "Added occupancy cost, after tax"),
                 (1560, t_leaves, 0, REMAINING_ANNUAL_ADVANTAGE, ORANGE, "Remaining advantage")]
@@ -429,9 +419,9 @@ class MainFilm(vc.Film):
             badge(ctx, 1772, base - REMAINING_ANNUAL_ADVANTAGE * scale - 26, 16, "question", prog(t, l2["start"] + 0.2, 0.8))
             pointer(ctx, 1000, 772, 16, CORAL, f1)
             text(ctx, "Excludes other cost, timing, and risk differences.", 1026, 786, SANS_MED, 24, INK, alpha=f1)
-            text(ctx, "Not a calculation of Salvadoran tax liability.", 1026, 822, ITAL, 23, GREY,
+            text(ctx, "Not a calculation of Salvadoran tax liability.", 1026, 822, SUB, 23, GREY,
                  alpha=ease_out(prog(t, phrase_time(l2, "It's not"), 0.5)))
-            text(ctx, "Not a promised return.", 1026, 854, ITAL, 23, GREY,
+            text(ctx, "Not a promised return.", 1026, 854, SUB, 23, GREY,
                  alpha=ease_out(prog(t, phrase_time(l2, "It's not") + 0.4, 0.5)))
 
     # ------------------------------------------------------------ 7. execution
@@ -449,10 +439,10 @@ class MainFilm(vc.Film):
 
     def _execution_risks(self, ctx, t, l0):
         a, dy = rise(t, l0["start"])
-        text(ctx, "Execution still decides the outcome", LEFT, 330 + dy, SANS_BOLD, 54, INK, alpha=a)
-        items = [("Demand", "Demanda", "demand"), ("Permits", "Permisos", "permits"),
-                 ("Utilities", "Servicios", "utilities"), ("Opening delays", "Retrasos de apertura", "opening delays")]
-        for i, (label, spanish, cue) in enumerate(items):
+        text(ctx, "Execution still decides the outcome", LEFT, 330 + dy, HEAD, 54, INK, alpha=a)
+        items = [("Demand", "demand"), ("Permits", "permits"),
+                 ("Utilities", "utilities"), ("Opening delays", "opening delays")]
+        for i, (label, cue) in enumerate(items):
             start = phrase_time(l0, cue) - 0.1
             x = LEFT + i * 420
             ip = prog(t, start, 0.8)
@@ -476,12 +466,11 @@ class MainFilm(vc.Film):
                 calendar(ctx, x + 60, 450, 200, 190, crossed=clamp((t - start - 0.3) / 3.2))
             na = ease_out(prog(t, start + 0.2, 0.5))
             big_number(ctx, f"0{i + 1}", x, 736, 56, INK, alpha=na)
-            text(ctx, label, x + 72, 718, SANS_SEMI, 27, INK, alpha=na)
-            text(ctx, spanish, x + 72, 748, ITAL, 22, GREY, alpha=na)
+            text(ctx, label, x + 72, 734, SANS_SEMI, 27, INK, alpha=na)
         erase = phrase_time(l0, "erase")
         ea = ease_out(prog(t, erase - 0.5, 0.5))
         if ea > 0:
-            text(ctx, "Remaining advantage (hypothetical)", LEFT, 806, ITAL, 22, GREY, alpha=ea)
+            text(ctx, "Remaining advantage (hypothetical)", LEFT, 806, SUB, 22, GREY, alpha=ea)
             full = 700
             remaining = lerp(full, 140, ease_in_out(prog(t, erase, 1.6)))
             rect(ctx, LEFT, 824, remaining, 34, ORANGE, ea)
@@ -495,7 +484,7 @@ class MainFilm(vc.Film):
 
     def _execution_layers(self, ctx, t, l1):
         a, dy = rise(t, l1["start"] + 0.2)
-        text(ctx, "Underwrite in two layers", LEFT, 330 + dy, SANS_BOLD, 54, INK, alpha=a)
+        text(ctx, "Underwrite in two layers", LEFT, 330 + dy, HEAD, 54, INK, alpha=a)
         columns = [(LEFT, "1 · Base case", "No incentives assumed. It must work on its own.", l1["start"] + 0.3, False),
                    (1000, "2 · Qualified benefit", "Shown separately, only if approved.",
                     phrase_time(l1, "show the qualified"), True)]
@@ -504,7 +493,7 @@ class MainFilm(vc.Film):
             if ca <= 0:
                 continue
             text(ctx, title, x, 420 + cdy, SANS_SEMI, 36, INK, alpha=ca)
-            text(ctx, sub, x, 458 + cdy, ITAL, 24, GREY, alpha=ca)
+            text(ctx, sub, x, 458 + cdy, SUB, 24, GREY, alpha=ca)
             base = 820
             line(ctx, [(x, base), (x + 700 * ease_out(prog(t, start + 0.1, 0.6)), base)], INK, 1.4)
             heights = [70, 75, 78, 80, 82] if benefit else [230, 250, 262, 272, 280]
@@ -522,7 +511,7 @@ class MainFilm(vc.Film):
                         sx = bx + s * 22
                         poly(ctx, [(sx, base), (sx + 9, base), (sx + 99, base - 90), (sx + 90, base - 90)], WHITE, 0.4)
                     ctx.restore()
-                text(ctx, f"Yr {k + 1}", bx + 46, base + 30, NUM_MED, 22, GREY, "center", alpha=bp)
+                text(ctx, f"YR {k + 1}", bx + 46, base + 30, MONO, 18, GREY, "center", alpha=bp)
             if benefit:
                 pill(ctx, "Subject to approval", x, 500, CORAL, 21, WHITE, SANS_SEMI, alpha=ca)
                 stamp(ctx, x + 600, 620, 58, prog(t, start + 1.2, 0.8))
@@ -534,17 +523,16 @@ class MainFilm(vc.Film):
         a = ease_out(prog(t, s + 0.3, 0.7))
         ctx.save()
         ctx.translate(0, (1 - a) * 20)
-        wordmark(ctx, W / 2, 290, 116, color=WHITE, fill=ORANGE, alpha=a, align="center")
+        wordmark(ctx, W / 2, 300, 104, reverse=True, alpha=a, align="center")
         ctx.restore()
-        text(ctx, "LATIN AMERICA EXPANSION", W / 2, 352, SANS_SEMI, 24, CORAL, "center", a, tracking=3)
-        text(ctx, "Expansión en América Latina", W / 2, 386, ITAL, 22, SKY, "center", a)
+        text(ctx, "LATIN AMERICA EXPANSION", W / 2, 392, MONO, 20, CORAL, "center", a, tracking=3)
         ba, bdy = rise(t, phrase_time(l0, "illustrated"))
         text(ctx, "Illustrated breakdowns of incentives, locations, and the real cost to open.", W / 2, 452 + bdy,
              SANS, 30, WHITE, "center", alpha=ba)
         sp = prog(t, l0["start"], 0.6)
         if sp > 0:
             with pop(ctx, W / 2, 536, sp):
-                pill(ctx, "Subscribe", W / 2, 504, ORANGE, 32, INK, SANS_BOLD, pad_x=48, align="center")
+                pill(ctx, "Subscribe", W / 2, 504, ORANGE, 30, LOGO_INK, SANS_SEMI, pad_x=48, align="center")
         ha, _ = rise(t, l0["start"] + 0.6)
         text(ctx, "@ConAurora  ·  conaurora.com", W / 2, 628, SANS_MED, 28, WHITE, "center", alpha=ha)
         np_ = prog(t, l1["start"] - 0.1, 0.6)
@@ -553,7 +541,7 @@ class MainFilm(vc.Film):
                 rect(ctx, 380, 676, 1160, 210, PAGE, radius=10)
                 na = ease_out(prog(t, l1["start"] + 0.2, 0.5))
                 text(ctx, "NEXT EPISODE", 420, 724, SANS_SEMI, 20, CORAL, alpha=na, tracking=2)
-                text_block(ctx, "Who receives the benefit: the owner, operator, or developer?", 420, 778, SANS_BOLD, 36,
+                text_block(ctx, "Who receives the benefit: the owner, operator, or developer?", 420, 778, HEAD, 36,
                            INK, 700, 1.15, alpha=na)
                 for k, (top, bottom_c, kw) in enumerate(((INK, SKY, {"prop": "keys", "arms": "hold"}),
                                                         (WHITE, PURPLE, {"coat": True, "hair_style": "bun"}),
