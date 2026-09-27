@@ -8,8 +8,8 @@ from pathlib import Path
 
 import cairo
 
-from aurora_gfx import (CREAM, NAVY, TEAL, OCHRE, COBALT, TERRACOTTA, FONT_BODY_MED, QC, clamp, ease_in_out,
-                        rounded_rect, set_color, text, text_width, stroke_polyline)
+from aurora_gfx import (PAGE, INK, CORAL, ORANGE, BLUE, GOLD, PINK, GREEN, SKY, WHITE, SANS_MED, QC,
+                        clamp, ease_in_out, rounded_rect, set_color, text, text_width)
 
 FPS = 30
 PRODUCTION = Path(__file__).resolve().parent.parent
@@ -93,32 +93,29 @@ def write_srt(captions, path):
     Path(path).write_text("\n".join(blocks), encoding="utf-8")
 
 def draw_caption(ctx, captions, t, center_x, bottom_y, size, max_box_width):
-    """Stable open caption: solid navy box, cream Geist text; hard cuts (no motion) for readability."""
+    """Stable open caption: solid indigo box, white Work Sans; hard cuts (no motion) for readability."""
     active = [c for c in captions if c["start"] <= t < c["end"]]
     if not active:
         return
     rows = active[0]["rows"]
-    line_h = size * 1.28
-    widths = [text_width(ctx, r, FONT_BODY_MED, size) for r in rows]
+    line_h = size * 1.3
+    widths = [text_width(ctx, r, SANS_MED, size) for r in rows]
     box_w = min(max_box_width, max(widths) + size * 1.3)
     box_h = line_h * len(rows) + size * 0.62
     x0, y0 = center_x - box_w / 2, bottom_y - box_h
-    rounded_rect(ctx, x0, y0, box_w, box_h, 10)
-    set_color(ctx, NAVY, 0.94)
-    ctx.fill_preserve()
-    set_color(ctx, CREAM, 0.9)
-    ctx.set_line_width(1.5)
-    ctx.stroke()
+    rounded_rect(ctx, x0, y0, box_w, box_h, 8)
+    set_color(ctx, INK, 0.95)
+    ctx.fill()
     for i, row in enumerate(rows):
         baseline = y0 + size * 0.31 + line_h * i + size * 0.98
-        text(ctx, row, center_x, baseline, FONT_BODY_MED, size, CREAM, align="center", label=f"caption:{row}", is_caption=True)
+        text(ctx, row, center_x, baseline, SANS_MED, size, WHITE, align="center", label=f"caption:{row}", is_caption=True)
     if max(widths) > max_box_width - size * 0.6:
         QC.boxes.append((-999, -999, -998, -998, f"caption too wide: {rows}", True))  # forces a QC flag
 
 
 # ---------------------------------------------------------------- transitions
 TRANSITION_HALF = 0.34
-TRANSITION_SETS = [(TEAL, OCHRE, COBALT), (TERRACOTTA, TEAL, OCHRE), (COBALT, TERRACOTTA, TEAL), (OCHRE, COBALT, TERRACOTTA)]
+TRANSITION_SETS = [(CORAL, ORANGE, BLUE), (BLUE, GOLD, CORAL), (ORANGE, PINK, INK), (GREEN, BLUE, ORANGE)]
 
 def draw_transition(ctx, t, boundaries, width, height):
     """Three colored bands sweep across and hand over to the next scene at full cover."""
@@ -144,13 +141,9 @@ def draw_transition(ctx, t, boundaries, width, height):
             else:
                 band = height / bands
                 x, y, w, h = width * a0, band * b, width * (a1 - a0), band
-            ctx.rectangle(x, y, w, h)
+            ctx.rectangle(x, y, w, h + 1)
             set_color(ctx, color)
             ctx.fill()
-            for edge in (x, x + w):
-                if 1 < edge < width - 1:
-                    stroke_polyline(ctx, [(edge, y), (edge, y + h)], NAVY, 3)
-            stroke_polyline(ctx, [(x, y + h), (x + w, y + h)], NAVY, 3)
 
 
 # ---------------------------------------------------------------- render loop

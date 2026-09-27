@@ -5,17 +5,17 @@ from pathlib import Path
 import video_core as vc
 
 ON_SCREEN = {
-    "hook": "A tax incentive can improve your return. / Can it fix a weak location? — historic facade; street empties; 'Tax incentive' tag",
-    "promise": "El Salvador Tax Incentives — Who qualifies for up to 10 years of relief? — three panels: which incentive applies · who receives the benefit · what remains after location and execution costs",
-    "opportunity": "Up to 10 years of income-tax relief — 10-year bar; illustrative city plan with defined perimeter; 'Nationwide regimes · separate rules' (Tourism, Free zones, International services); 'Not every business qualifies. Verify current law and regulation before underwriting.'",
-    "checks": "Three checks: 1 Exact location (inside vs. one block outside) · 2 Qualifying investment (Food, Lodging, Culture, Housing, Restoration; investment vs. minimum threshold) · 3 Approval (APLAN · Ventanilla Única; 'Qualified' stamp; 'No approval, no benefit to model.')",
+    "hook": "A tax incentive can improve your return. / Can it fix a weak location? — four facades rise; the street goes quiet around the one carrying a 'Tax incentive' tag",
+    "promise": "El Salvador Tax Incentives — Who qualifies for up to 10 years of relief? — 01 which incentive applies · 02 who receives the benefit · 03 what remains after location and execution costs (with Spanish partner lines)",
+    "opportunity": "Hero numeral counts 1→10 'years' with a reader seated on it and a ten-dot ruler; orange block map of the defined Historic Center (illustrative); 'Separate nationwide regimes' (Tourism, Free zones, International services); 'Not every business qualifies. Verify current law and regulation before underwriting.'",
+    "checks": "Giant 3 'checks before you model any benefit': 1 Exact location (inside vs. one block outside) · 2 Qualifying investment (Food, Lodging, Culture, Housing, Restoration; tape-measure vs. minimum threshold) · 3 Approval (APLAN · Ventanilla Única; 'Qualified' stamp; 'No approval, no benefit to model.')",
     "beneficiary": "Which entity receives the benefit? — Owner · landlord / Operator · tenant / Developer; 'Landlord qualified ≠ tenant benefits automatically'",
-    "economics": "Simplified hypothetical · Annual after-tax comparison: $30,000 − $24,000 = $6,000; waterfall chart; 'Excludes other cost, timing, and risk differences. Not a calculation of Salvadoran tax liability. Not a promised return.'",
-    "execution": "Execution still decides the outcome — Demand, Permits, Utilities, Opening delays; eroding advantage bar / Underwrite in two layers — 1 Base case (no incentives) · 2 Qualified benefit (shown separately, subject to approval)",
+    "economics": "Simplified hypothetical · annual, after tax: $30,000 − $24,000 = $6,000 as hero numerals; flat waterfall chart; 'Excludes other cost, timing, and risk differences. Not a calculation of Salvadoran tax liability. Not a promised return.'",
+    "execution": "Execution still decides the outcome — 01 Demand, 02 Permits, 03 Utilities, 04 Opening delays; eroding advantage bar / Underwrite in two layers — 1 Base case (no incentives) · 2 Qualified benefit (striped, subject to approval)",
     "close": "Aurora — Latin America Expansion; Subscribe; @ConAurora · conaurora.com; Next episode: Who receives the benefit: the owner, operator, or developer?",
-    "s_hook": "Up to 10 years of tax relief? — Qualifying investments: Potentially / Every business: No",
-    "s_zone": "One defined Historic Center, not the whole country — illustrative perimeter",
-    "s_checks": "Three checks: Location · Investment · Approval (APLAN)",
+    "s_hook": "Up to 10 years of tax relief? — counting numeral with seated reader; Qualifying investments: Potentially / Every business: No",
+    "s_zone": "One defined Historic Center, not the whole country — orange block map (illustrative)",
+    "s_checks": "3 checks: Location · Investment · Approval (APLAN)",
     "s_benef": "Who receives it? — Owner · landlord ✓ / Operator · tenant ✗ / Developer ? — 'Landlord approved ≠ tenant benefits automatically'",
     "s_close": "Aurora; Subscribe; @ConAurora; Next breakdown: Who actually gets the benefit: owner, operator, or developer?",
 }

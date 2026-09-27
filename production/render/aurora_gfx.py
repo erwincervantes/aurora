@@ -1,33 +1,51 @@
-"""Aurora editorial illustration toolkit (pycairo).
+"""Aurora editorial illustration toolkit (pycairo) — flat 'facts & figures' style.
 
-Brand constants, easing, text with bounds QC, progressive line drawing, and the
-geometric illustration components shared by the YouTube film, the Short, and the thumbnail.
+Look: cool off-white page, indigo condensed numerals as heroes, coral section labels and rules,
+italic grey secondary lines, flat outline-free figures and facades, orange block maps with
+white street lines and small numbered markers. Everything is original vector drawing.
 """
 import math
+from contextlib import contextmanager
+
 import cairo
+
 
 # ---------------------------------------------------------------- brand system
 def hex_rgb(value):
     value = value.lstrip("#")
     return tuple(int(value[i:i + 2], 16) / 255 for i in (0, 2, 4))
 
-NAVY = hex_rgb("#1A2236")        # ink: text and outlines
-CREAM = hex_rgb("#F7F2E8")       # paper background
-# Illustration panels: saturated mid-tones from Salvadoran colonial facades. Validated as a set
-# (lightness band, chroma, CVD separation >= 10 dE) and each carries navy text at >= 4.7:1.
-TEAL = hex_rgb("#2E9E8A")
-TERRACOTTA = hex_rgb("#E5634F")
-OCHRE = hex_rgb("#E2A41C")
-COBALT = hex_rgb("#5E93E0")
-PAPER = hex_rgb("#ECE3D3")       # secondary surface one step darker than cream (flat, no gradient)
+def mix(a, b, t):
+    return tuple(a[i] + (b[i] - a[i]) * t for i in range(3))
 
-FONT_HEAD = "AuroraFrauncesSemi"   # Fraunces 600, opsz 72, SOFT 0, WONK 0 (static instance)
-FONT_HEAD_REG = "AuroraFrauncesReg"  # Fraunces 400
-FONT_BODY = "AuroraGeistReg"       # Geist 400
-FONT_BODY_MED = "AuroraGeistMed"   # Geist 500
-FONT_BODY_SEMI = "AuroraGeistSemi" # Geist 600
+PAGE = hex_rgb("#F1F1F4")      # cool off-white page
+INK = hex_rgb("#2D2B6E")       # indigo: numerals, headings, text
+CORAL = hex_rgb("#E5474E")     # section labels, rules, data lines
+GREY = hex_rgb("#7E8197")      # italic secondary lines
+RULE = hex_rgb("#D3D5DF")      # gridlines, inactive map blocks
+LIGHT = hex_rgb("#E3E4EB")     # quiet surfaces
+WHITE = hex_rgb("#FBFBFD")
+# illustration fills (flat, no outlines)
+ORANGE = hex_rgb("#F29A3A")    # map mass, remaining advantage
+GOLD = hex_rgb("#F6B73C")
+BLUE = hex_rgb("#3A6BC8")      # savings
+SKY = hex_rgb("#9CC2EA")
+PINK = hex_rgb("#EE82A9")
+RED = hex_rgb("#D8402E")
+GREEN = hex_rgb("#3E9E5A")
+PURPLE = hex_rgb("#7C5AA0")
+SKIN = hex_rgb("#F2A08C")
+DARK = hex_rgb("#2A2438")      # hair, shoes
 
-LINE = 3.0  # standard outline weight at 1080p: thin, precise, still survives YouTube compression
+NUM = "AuroraNumSemi"          # Oswald 600: hero numerals
+NUM_MED = "AuroraNumMed"       # Oswald 500
+SANS = "AuroraSansReg"         # Work Sans 400
+SANS_MED = "AuroraSansMed"     # Work Sans 500
+SANS_SEMI = "AuroraSansSemi"   # Work Sans 600
+SANS_BOLD = "AuroraSansBold"   # Work Sans 700
+ITAL = "AuroraSansItal"        # Work Sans Italic 400: secondary / Spanish lines
+
+HAIR = 1.6                     # hairline weight for rules, grids, cranes
 
 
 # ---------------------------------------------------------------- timing
@@ -62,11 +80,11 @@ def phrase_time(line, phrase):
 
 # ---------------------------------------------------------------- QC registry
 class QC:
-    """Collects device-space text boxes each frame so we can flag clipping and caption collisions."""
+    """Collects visible device-space text boxes each frame to flag clipping and caption collisions."""
     width = 1920
     height = 1080
     safe_margin = 40
-    caption_zone = None     # (x0, y0, x1, y1) reserved for captions
+    caption_zone = None
     boxes = []
 
     @classmethod
@@ -75,13 +93,12 @@ class QC:
 
     @classmethod
     def register(cls, ctx, x0, y0, x1, y1, label, is_caption=False):
-        cx0, cy0, cx1, cy1 = ctx.clip_extents()  # only the visible (unclipped) part of the text counts
+        cx0, cy0, cx1, cy1 = ctx.clip_extents()
         x0, y0, x1, y1 = max(x0, cx0), max(y0, cy0), min(x1, cx1), min(y1, cy1)
         if x1 <= x0 or y1 <= y0:
             return
         corners = [ctx.user_to_device(x, y) for x, y in ((x0, y0), (x1, y0), (x0, y1), (x1, y1))]
-        xs = [c[0] for c in corners]
-        ys = [c[1] for c in corners]
+        xs, ys = [c[0] for c in corners], [c[1] for c in corners]
         cls.boxes.append((min(xs), min(ys), max(xs), max(ys), label, is_caption))
 
     @classmethod
@@ -98,12 +115,12 @@ class QC:
         return issues
 
 
-# ---------------------------------------------------------------- color / primitives
+# ---------------------------------------------------------------- primitives
 def set_color(ctx, color, alpha=1.0):
     ctx.set_source_rgba(color[0], color[1], color[2], alpha)
 
 def rounded_rect(ctx, x, y, w, h, r):
-    r = max(0.0, min(r, w / 2, h / 2))
+    r = max(0.0, min(r, abs(w) / 2, abs(h) / 2))
     ctx.new_sub_path()
     ctx.arc(x + w - r, y + r, r, -math.pi / 2, 0)
     ctx.arc(x + w - r, y + h - r, r, 0, math.pi / 2)
@@ -111,63 +128,32 @@ def rounded_rect(ctx, x, y, w, h, r):
     ctx.arc(x + r, y + r, r, math.pi, 3 * math.pi / 2)
     ctx.close_path()
 
-def path_length(ctx):
-    total, last, start = 0.0, None, None
-    for kind, points in ctx.copy_path_flat():
-        if kind == cairo.PATH_MOVE_TO:
-            last = start = points
-        elif kind == cairo.PATH_LINE_TO:
-            total += math.dist(last, points)
-            last = points
-        elif kind == cairo.PATH_CLOSE_PATH and last and start:
-            total += math.dist(last, start)
-            last = start
-    return total
-
-class Shape:
-    """One drawable element: a path builder plus optional fill; outlines draw progressively."""
-    def __init__(self, build, fill=None, stroke=True, line_width=None, fill_alpha=1.0, stroke_color=None):
-        self.build = build
-        self.fill = fill
-        self.stroke = stroke
-        self.line_width = line_width
-        self.fill_alpha = fill_alpha
-        self.stroke_color = stroke_color
-
-def draw_shapes(ctx, shapes, line_p=1.0, fill_p=1.0, line_width=LINE, color=NAVY):
-    """Fill (fading in with fill_p) then stroke outlines sequentially up to line_p of their total length."""
-    ctx.set_line_join(cairo.LINE_JOIN_ROUND)
-    ctx.set_line_cap(cairo.LINE_CAP_ROUND)
-    if fill_p > 0:
-        for shape in shapes:
-            if shape.fill is not None:
-                ctx.new_path()
-                shape.build(ctx)
-                set_color(ctx, shape.fill, shape.fill_alpha * clamp(fill_p))
-                ctx.fill()
-    if line_p <= 0:
-        ctx.new_path()
+def rect(ctx, x, y, w, h, color, alpha=1.0, radius=0):
+    if w <= 0 or h <= 0:
         return
-    lengths = []
-    for shape in shapes:
-        if shape.stroke:
-            ctx.new_path()
-            shape.build(ctx)
-            lengths.append((shape, path_length(ctx)))
-    budget = sum(length for _, length in lengths) * clamp(line_p)
-    for shape, length in lengths:
-        if budget <= 0:
-            break
-        ctx.new_path()
-        shape.build(ctx)
-        ctx.set_line_width(shape.line_width or line_width)
-        set_color(ctx, shape.stroke_color or color)
-        if budget < length:
-            ctx.set_dash([budget, length + 20])
-        ctx.stroke()
-        ctx.set_dash([])
-        budget -= length
+    if radius:
+        rounded_rect(ctx, x, y, w, h, radius)
+    else:
+        ctx.rectangle(x, y, w, h)
+    set_color(ctx, color, alpha)
+    ctx.fill()
+
+def disc(ctx, cx, cy, r, color, alpha=1.0):
+    if r <= 0:
+        return
     ctx.new_path()
+    ctx.arc(cx, cy, r, 0, 2 * math.pi)
+    set_color(ctx, color, alpha)
+    ctx.fill()
+
+def poly(ctx, points, color, alpha=1.0):
+    ctx.new_path()
+    ctx.move_to(*points[0])
+    for p in points[1:]:
+        ctx.line_to(*p)
+    ctx.close_path()
+    set_color(ctx, color, alpha)
+    ctx.fill()
 
 def partial_polyline(points, fraction, closed=False):
     pts = list(points) + ([points[0]] if closed else [])
@@ -185,7 +171,7 @@ def partial_polyline(points, fraction, closed=False):
             break
     return out
 
-def stroke_polyline(ctx, points, color=NAVY, width=LINE, dash=None, alpha=1.0):
+def line(ctx, points, color=INK, width=HAIR, dash=None, alpha=1.0, cap=cairo.LINE_CAP_ROUND):
     if len(points) < 2:
         return
     ctx.new_path()
@@ -193,7 +179,7 @@ def stroke_polyline(ctx, points, color=NAVY, width=LINE, dash=None, alpha=1.0):
     for p in points[1:]:
         ctx.line_to(*p)
     ctx.set_line_width(width)
-    ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+    ctx.set_line_cap(cap)
     ctx.set_line_join(cairo.LINE_JOIN_ROUND)
     set_color(ctx, color, alpha)
     if dash:
@@ -201,38 +187,50 @@ def stroke_polyline(ctx, points, color=NAVY, width=LINE, dash=None, alpha=1.0):
     ctx.stroke()
     ctx.set_dash([])
 
-def check_mark(ctx, cx, cy, size, p=1.0, color=NAVY, width=None):
-    points = [(cx - size * 0.42, cy + size * 0.02), (cx - size * 0.12, cy + size * 0.32), (cx + size * 0.45, cy - size * 0.33)]
-    stroke_polyline(ctx, partial_polyline(points, p), color, width or max(3, size * 0.16))
+def check_mark(ctx, cx, cy, size, p=1.0, color=WHITE, width=None):
+    pts = [(cx - size * 0.38, cy + size * 0.02), (cx - size * 0.1, cy + size * 0.3), (cx + size * 0.4, cy - size * 0.3)]
+    line(ctx, partial_polyline(pts, p), color, width or max(3, size * 0.17))
 
-def cross_mark(ctx, cx, cy, size, p=1.0, color=NAVY, width=None):
-    s = size * 0.36
-    w = width or max(3, size * 0.15)
-    stroke_polyline(ctx, partial_polyline([(cx - s, cy - s), (cx + s, cy + s)], clamp(p * 2)), color, w)
-    stroke_polyline(ctx, partial_polyline([(cx + s, cy - s), (cx - s, cy + s)], clamp(p * 2 - 1)), color, w)
+def cross_mark(ctx, cx, cy, size, p=1.0, color=WHITE, width=None):
+    s, w = size * 0.3, width or max(3, size * 0.16)
+    line(ctx, partial_polyline([(cx - s, cy - s), (cx + s, cy + s)], clamp(p * 2)), color, w)
+    line(ctx, partial_polyline([(cx + s, cy - s), (cx - s, cy + s)], clamp(p * 2 - 1)), color, w)
 
-def badge(ctx, cx, cy, r, fill, p=1.0, mark="check"):
-    """Circle badge that pops in, then draws its mark."""
-    scale = ease_back(prog(p, 0, 0.5))
-    if scale <= 0:
-        return
+@contextmanager
+def grow(ctx, cx, base_y, p, overshoot=1.2):
+    """Objects rise out of the ground line (scale Y from the base) — the house reveal."""
+    s = ease_back(clamp(p), overshoot) if p < 1 else 1.0
+    ctx.save()
+    ctx.translate(cx, base_y)
+    ctx.scale(1, max(0.0001, s))
+    ctx.translate(-cx, -base_y)
+    yield s
+    ctx.restore()
+
+@contextmanager
+def pop(ctx, cx, cy, p, overshoot=1.6):
+    s = ease_back(clamp(p), overshoot) if p < 1 else 1.0
     ctx.save()
     ctx.translate(cx, cy)
-    ctx.scale(scale, scale)
-    ctx.arc(0, 0, r, 0, 2 * math.pi)
-    set_color(ctx, fill)
-    ctx.fill_preserve()
-    set_color(ctx, NAVY)
-    ctx.set_line_width(LINE)
-    ctx.stroke()
-    mp = prog(p, 0.45, 0.55)
-    if mark == "check":
-        check_mark(ctx, 0, 0, r * 1.1, mp)
-    elif mark == "cross":
-        cross_mark(ctx, 0, 0, r * 1.1, mp)
-    elif mark == "question":
-        if mp > 0:
-            text(ctx, "?", 0, r * 0.36, FONT_HEAD, r * 1.15, NAVY, align="center", alpha=mp, label=None)
+    ctx.scale(max(0.0001, s), max(0.0001, s))
+    ctx.translate(-cx, -cy)
+    yield s
+    ctx.restore()
+
+@contextmanager
+def wipe(ctx, x, y, w, h, p, direction="right"):
+    e = ease_in_out(clamp(p))
+    ctx.save()
+    if direction == "right":
+        ctx.rectangle(x, y, w * e, h)
+    elif direction == "left":
+        ctx.rectangle(x + w * (1 - e), y, w * e, h)
+    elif direction == "up":
+        ctx.rectangle(x, y + h * (1 - e), w, h * e)
+    else:
+        ctx.rectangle(x, y, w, h * e)
+    ctx.clip()
+    yield e
     ctx.restore()
 
 
@@ -250,8 +248,8 @@ def text_width(ctx, s, face, size, tracking=0.0):
     font(ctx, face, size)
     return ctx.text_extents(s).x_advance + tracking * max(0, len(s) - 1)
 
-def text(ctx, s, x, y, face, size, color=NAVY, align="left", alpha=1.0, tracking=0.0, label="text", is_caption=False):
-    """Draw one line with baseline at y. Returns the drawn width."""
+def text(ctx, s, x, y, face, size, color=INK, align="left", alpha=1.0, tracking=0.0, label="text", is_caption=False):
+    """One line, baseline at y. Returns drawn width."""
     font(ctx, face, size)
     width = text_width(ctx, s, face, size, tracking)
     if align == "center":
@@ -287,167 +285,218 @@ def wrap(ctx, s, face, size, max_width):
         lines.append(current)
     return lines
 
-def text_block(ctx, s, x, y, face, size, color=NAVY, max_width=800, leading=1.18, align="left", alpha=1.0, p=None, stagger=0.12):
-    """Wrapped paragraph; optional p (0..1+) animates each line rising in. Returns bottom baseline y."""
+def text_block(ctx, s, x, y, face, size, color=INK, max_width=800, leading=1.2, align="left", alpha=1.0, p=None, stagger=0.12):
+    """Wrapped paragraph; optional p animates lines rising in. Returns the last baseline y."""
     lines = wrap(ctx, s, face, size, max_width)
-    for i, line in enumerate(lines):
-        line_alpha, dy = alpha, 0.0
+    for i, ln in enumerate(lines):
+        la, dy = alpha, 0.0
         if p is not None:
             lp = ease_out(clamp((p - i * stagger) / 0.6))
-            line_alpha, dy = alpha * lp, (1 - lp) * size * 0.35
-        if line_alpha > 0:
-            text(ctx, line, x, y + i * size * leading + dy, face, size, color, align, line_alpha)
+            la, dy = alpha * lp, (1 - lp) * size * 0.35
+        if la > 0:
+            text(ctx, ln, x, y + i * size * leading + dy, face, size, color, align, la)
     return y + (len(lines) - 1) * size * leading
 
-def rise(ctx, t, start, duration=0.55):
+def rise(t, start, duration=0.55):
     """(alpha, dy) for a reveal that rises into place and then stays perfectly still."""
     p = ease_out(prog(t, start, duration))
     return p, (1 - p) * 18
 
-def chip(ctx, label, x, y, fill, size=24, face=FONT_BODY_MED, pad_x=18, height=None, alpha=1.0, align="left"):
-    """Rounded label pill. (x, y) is top-left (or top-center with align='center'). Returns width."""
-    height = height or size * 1.9
-    width = text_width(ctx, label, face, size) + pad_x * 2
+def section(ctx, t, start, english, spanish, x=140, y=196, align="left"):
+    """Coral uppercase section label with its italic grey Spanish partner line."""
+    a, dy = rise(t, start)
+    if a <= 0:
+        return
+    text(ctx, english.upper(), x, y + dy, SANS_SEMI, 22, CORAL, align, a, tracking=1.2)
+    text(ctx, spanish, x, y + 30 + dy, ITAL, 22, CORAL, align, a * 0.75)
+
+def pair(ctx, english, spanish, x, y, size=26, face=SANS, alpha=1.0, align="left", max_width=None, color=INK):
+    """Primary line + italic grey secondary line (the bilingual label pairing). Returns bottom baseline."""
+    if max_width:
+        y = text_block(ctx, english, x, y, face, size, color, max_width, 1.22, align, alpha)
+    else:
+        text(ctx, english, x, y, face, size, color, align, alpha)
+    if spanish:
+        y2 = y + size * 1.25
+        if max_width:
+            return text_block(ctx, spanish, x, y2, ITAL, size * 0.92, GREY, max_width, 1.22, align, alpha)
+        text(ctx, spanish, x, y2, ITAL, size * 0.92, GREY, align, alpha)
+        return y2
+    return y
+
+def pill(ctx, label, x, y, fill, size=24, color=INK, face=SANS_MED, pad_x=18, alpha=1.0, align="left", dot=None):
+    """Flat rounded label. (x, y) is top-left (or top-center). Returns width."""
+    h = size * 1.8
+    w = text_width(ctx, label, face, size) + pad_x * 2 + (size * 0.9 if dot else 0)
     if align == "center":
-        x -= width / 2
-    rounded_rect(ctx, x, y, width, height, height / 2)
+        x -= w / 2
+    rounded_rect(ctx, x, y, w, h, h / 2)
     set_color(ctx, fill, alpha)
-    ctx.fill_preserve()
-    set_color(ctx, NAVY, alpha)
-    ctx.set_line_width(LINE * 0.8)
-    ctx.stroke()
-    text(ctx, label, x + pad_x, y + height * 0.5 + size * 0.36, face, size, NAVY, alpha=alpha)
-    return width
+    ctx.fill()
+    tx = x + pad_x
+    if dot:
+        disc(ctx, tx + size * 0.3, y + h / 2, size * 0.3, dot, alpha)
+        tx += size * 0.9
+    text(ctx, label, tx, y + h * 0.5 + size * 0.36, face, size, color, alpha=alpha)
+    return w
 
-def kicker(ctx, label, x, y, alpha=1.0, color=NAVY, size=20, align="left"):
-    return text(ctx, label.upper(), x, y, FONT_BODY_SEMI, size, color, align=align, alpha=alpha, tracking=size * 0.14)
-
-
-# ---------------------------------------------------------------- panels
-def panel(ctx, x, y, w, h, fill, p=1.0, direction="up", radius=0, outline=True, line_p=None):
-    """Flat color panel revealed by a wipe (the SURES-style colored block)."""
+def marker(ctx, cx, cy, r, label, fill=INK, p=1.0, color=WHITE):
+    """Numbered circle marker (map / list index) with condensed numeral."""
     if p <= 0:
         return
-    e = ease_in_out(clamp(p))
-    ctx.save()
-    if direction == "up":
-        ctx.rectangle(x - 4, y + h * (1 - e) - 4, w + 8, h * e + 8)
-    elif direction == "down":
-        ctx.rectangle(x - 4, y - 4, w + 8, h * e + 8)
-    elif direction == "right":
-        ctx.rectangle(x - 4, y - 4, w * e + 8, h + 8)
-    else:
-        ctx.rectangle(x + w * (1 - e) - 4, y - 4, w * e + 8, h + 8)
-    ctx.clip()
-    rounded_rect(ctx, x, y, w, h, radius) if radius else ctx.rectangle(x, y, w, h)
-    set_color(ctx, fill)
-    ctx.fill()
-    ctx.restore()
-    if outline:
-        lp = clamp((line_p if line_p is not None else p) * 1.0)
-        pts = [(x, y + h), (x, y), (x + w, y), (x + w, y + h)]
-        if radius:
-            draw_shapes(ctx, [Shape(lambda c: rounded_rect(c, x, y, w, h, radius))], lp, 0)
-        else:
-            stroke_polyline(ctx, partial_polyline(pts, lp, closed=True))
+    with pop(ctx, cx, cy, p):
+        disc(ctx, cx, cy, r, fill)
+        text(ctx, str(label), cx, cy + r * 0.38, NUM, r * 1.05, color, "center", label=None)
 
-def ground_line(ctx, x0, x1, y, p=1.0):
-    stroke_polyline(ctx, partial_polyline([(x0, y), (x1, y)], p))
+def badge(ctx, cx, cy, r, kind, p=1.0):
+    """Flat status badge: check (green), cross (coral), question (gold)."""
+    if p <= 0:
+        return
+    fill = {"check": GREEN, "cross": CORAL, "question": GOLD}[kind]
+    with pop(ctx, cx, cy, prog(p, 0, 0.5)):
+        disc(ctx, cx, cy, r, fill)
+        mp = prog(p, 0.4, 0.6)
+        if kind == "check":
+            check_mark(ctx, cx, cy, r * 1.15, mp)
+        elif kind == "cross":
+            cross_mark(ctx, cx, cy, r * 1.15, mp)
+        elif mp > 0:
+            text(ctx, "?", cx, cy + r * 0.42, NUM, r * 1.3, INK, "center", alpha=mp, label=None)
+
+def big_number(ctx, s, x, y, size, color=INK, align="left", alpha=1.0):
+    return text(ctx, s, x, y, NUM, size, color, align, alpha, label=f"number:{s}")
+
+def pointer(ctx, x, y, size=16, color=INK, alpha=1.0):
+    """Small downward triangle bullet (▼) that introduces a note."""
+    poly(ctx, [(x, y), (x + size, y), (x + size / 2, y + size * 0.85)], color, alpha)
 
 
 # ---------------------------------------------------------------- figures
-def person(ctx, x, feet_y, h, shirt, walk=0.0, facing=1, arms="down", hardhat=False, apron=False,
-           prop=None, alpha=1.0, hair=NAVY, seated=False):
-    """Geometric editorial figure. walk is a phase in radians; arms: down|hold|point|wave|present."""
+def person(ctx, x, feet_y, h, top=WHITE, bottom=BLUE, accent=CORAL, skin=SKIN, hair=DARK, shoes=DARK,
+           walk=0.0, facing=1, arms="down", coat=False, hardhat=False, prop=None, alpha=1.0, seated=False,
+           hair_style="short"):
+    """Tall geometric editorial figure, flat fills, no outlines.
+
+    arms: down | hold | point | wave | present | hip.  prop: folder | document | keys | tablet | magnifier.
+    seated: sits on a surface at feet_y (legs forward and down).
+    """
     ctx.save()
     ctx.push_group()
     ctx.translate(x, feet_y)
     ctx.scale(facing, 1)
-    r = 0.095 * h
-    head_y = -h + r
-    torso_top = head_y + r + 0.035 * h
-    torso_h = 0.36 * h
-    hip_y = torso_top + torso_h
-    leg_w = 0.075 * h
-    swing = math.sin(walk) * 0.38
+    r = 0.062 * h
+    head_cy = -h + r
+    torso_top = head_cy + r + 0.035 * h
+    torso_h = 0.33 * h
+    hip = torso_top + torso_h
+    leg_w = 0.085 * h
+    swing = math.sin(walk) * 0.34
+    shoe_h, shoe_w = 0.035 * h, 0.13 * h
 
-    # legs (navy trousers)
-    ctx.set_line_cap(cairo.LINE_CAP_ROUND)
-    set_color(ctx, NAVY)
-    ctx.set_line_width(leg_w)
+    # legs
     if seated:
-        for dx in (-0.05 * h, 0.05 * h):
-            ctx.move_to(dx, hip_y - 0.02 * h)
-            ctx.line_to(dx + 0.22 * h, hip_y - 0.02 * h)
-            ctx.line_to(dx + 0.22 * h, 0)
-            ctx.stroke()
+        seat = 0.0
+        shift = hip - seat  # figure drawn so hips rest on the seat line
+        ctx.translate(0, -shift)
+        for dx, c in ((-0.02 * h, mix(bottom, DARK, 0.15)), (0.03 * h, bottom)):
+            rect(ctx, dx - leg_w / 2, hip - leg_w, 0.22 * h, leg_w, c)               # thigh forward
+            rect(ctx, dx + 0.22 * h - leg_w * 1.05, hip - leg_w, leg_w, 0.3 * h, c)  # shin down
+            rect(ctx, dx + 0.22 * h - leg_w * 1.05, hip - leg_w + 0.3 * h - shoe_h / 2, shoe_w, shoe_h, shoes, radius=shoe_h / 2)
     else:
-        leg_len = -hip_y - leg_w * 0.4
-        for sign in (1, -1):
+        leg_len = -hip - shoe_h * 0.6
+        for sign, c in ((-1, mix(bottom, DARK, 0.15)), (1, bottom)):
             angle = swing * sign
-            ctx.move_to(sign * 0.04 * h, hip_y)
-            ctx.line_to(sign * 0.04 * h + math.sin(angle) * leg_len, hip_y + math.cos(angle) * leg_len)
-            ctx.stroke()
+            ctx.save()
+            ctx.translate(sign * 0.05 * h * 0.9, hip)
+            ctx.rotate(-angle)
+            rect(ctx, -leg_w / 2, -0.01 * h, leg_w, leg_len, c)
+            rect(ctx, -leg_w / 2, leg_len - shoe_h * 0.4, shoe_w, shoe_h, shoes, radius=shoe_h / 2)
+            ctx.restore()
 
-    # torso: trapezoid with rounded shoulders
-    top_w, bot_w = 0.27 * h, 0.22 * h
-    def torso(c):
-        c.new_sub_path()
-        c.move_to(-bot_w / 2, hip_y)
-        c.line_to(-top_w / 2, torso_top + 0.05 * h)
-        c.curve_to(-top_w / 2, torso_top, -top_w / 2, torso_top, -top_w / 2 + 0.05 * h, torso_top)
-        c.line_to(top_w / 2 - 0.05 * h, torso_top)
-        c.curve_to(top_w / 2, torso_top, top_w / 2, torso_top, top_w / 2, torso_top + 0.05 * h)
-        c.line_to(bot_w / 2, hip_y)
-        c.close_path()
-    draw_shapes(ctx, [Shape(torso, fill=shirt)], 1, 1, line_width=LINE * 0.9)
-    if apron:
-        def apron_shape(c):
-            c.rectangle(-bot_w * 0.36, torso_top + torso_h * 0.35, bot_w * 0.72, torso_h * 0.75)
-        draw_shapes(ctx, [Shape(apron_shape, fill=CREAM)], 1, 1, line_width=LINE * 0.8)
+    # torso (and coat skirt)
+    tw = 0.3 * h
+    coat_len = 0.2 * h if coat else 0.0
+    ctx.new_path()
+    ctx.move_to(-tw / 2, torso_top + 0.04 * h)
+    ctx.curve_to(-tw / 2, torso_top, -tw / 2 + 0.01 * h, torso_top, -tw / 2 + 0.05 * h, torso_top)
+    ctx.line_to(tw / 2 - 0.05 * h, torso_top)
+    ctx.curve_to(tw / 2 - 0.01 * h, torso_top, tw / 2, torso_top, tw / 2, torso_top + 0.04 * h)
+    ctx.line_to(tw / 2 * (1.05 if coat else 0.92), hip + coat_len)
+    ctx.line_to(-tw / 2 * (1.05 if coat else 0.92), hip + coat_len)
+    ctx.close_path()
+    set_color(ctx, top)
+    ctx.fill()
+    # shirt V and collar accent
+    poly(ctx, [(-0.045 * h, torso_top), (0.045 * h, torso_top), (0, torso_top + 0.1 * h)], accent)
+    if coat:
+        line(ctx, [(0, torso_top + 0.1 * h), (0, hip + coat_len)], mix(top, INK, 0.18), 2)
+        rect(ctx, 0.05 * h, torso_top + 0.13 * h, 0.05 * h, 0.012 * h, mix(top, INK, 0.25))  # pocket badge
+    # neck
+    rect(ctx, -0.022 * h, head_cy + r * 0.6, 0.044 * h, 0.05 * h, skin)
 
-    # arms: outlined limbs (navy stroke under shirt-colored stroke)
-    shoulder_y = torso_top + 0.04 * h
-    arm_len = 0.33 * h
-    # angle from straight-down; positive swings toward the facing direction
-    poses = {"down": (-0.12 + swing * 0.6, -0.12 - swing * 0.6), "hold": (1.15, 0.95), "point": (1.5, 0.08),
-             "wave": (2.7, 0.08), "present": (1.0, 0.15)}
-    front_angle, back_angle = poses.get(arms, poses["down"])
-    for sx, angle in ((top_w / 2 - 0.03 * h, front_angle), (-top_w / 2 + 0.03 * h, back_angle)):
-        splay = 0.06 * h * (1 if sx > 0 else -1) if arms == "down" else 0.0
-        ex = sx + math.sin(angle) * arm_len + splay
+    # arms: rounded bars in the torso colour, skin hands
+    shoulder_y = torso_top + 0.03 * h
+    arm_len = 0.34 * h
+    arm_w = 0.07 * h
+    poses = {"down": (-0.05 + swing * 0.7, -0.05 - swing * 0.7), "hold": (1.2, 0.9), "point": (1.55, 0.05),
+             "wave": (2.75, 0.05), "present": (1.0, 0.12), "hip": (0.1, -0.5)}
+    front, back = poses.get(arms, poses["down"])
+    hands = []
+    for sx, angle, shade in ((-tw / 2 + 0.02 * h, back, mix(top, DARK, 0.12)), (tw / 2 - 0.02 * h, front, top)):
+        ex = sx + math.sin(angle) * arm_len
         ey = shoulder_y + math.cos(angle) * arm_len
-        for width, color in ((0.07 * h + 2 * LINE * 0.8, NAVY), (0.07 * h, shirt)):
-            ctx.set_line_width(width)
-            set_color(ctx, color)
-            ctx.move_to(sx, shoulder_y)
-            ctx.line_to(ex, ey)
-            ctx.stroke()
+        ctx.new_path()
+        ctx.move_to(sx, shoulder_y)
+        ctx.line_to(ex, ey)
+        ctx.set_line_width(arm_w)
+        ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+        set_color(ctx, shade)
+        ctx.stroke()
+        disc(ctx, ex, ey, 0.03 * h, skin)
+        hands.append((ex, ey))
+    fx, fy = hands[1]
     if prop == "folder":
-        def folder(c):
-            c.rectangle(0.1 * h, torso_top + 0.1 * h, 0.2 * h, 0.15 * h)
-        draw_shapes(ctx, [Shape(folder, fill=OCHRE)], 1, 1, line_width=LINE * 0.8)
+        rect(ctx, fx - 0.02 * h, fy - 0.1 * h, 0.16 * h, 0.12 * h, RED)
+    elif prop == "document":
+        rect(ctx, fx - 0.01 * h, fy - 0.14 * h, 0.12 * h, 0.16 * h, WHITE)
+        for k in range(3):
+            line(ctx, [(fx + 0.01 * h, fy - 0.1 * h + k * 0.035 * h), (fx + 0.09 * h, fy - 0.1 * h + k * 0.035 * h)], RULE, 2)
+    elif prop == "keys":
+        disc(ctx, fx + 0.03 * h, fy + 0.02 * h, 0.022 * h, GOLD)
+        rect(ctx, fx + 0.03 * h, fy + 0.012 * h, 0.07 * h, 0.014 * h, GOLD)
     elif prop == "tablet":
-        def tablet(c):
-            rounded_rect(c, 0.08 * h, torso_top + 0.08 * h, 0.16 * h, 0.2 * h, 0.02 * h)
-        draw_shapes(ctx, [Shape(tablet, fill=COBALT)], 1, 1, line_width=LINE * 0.8)
+        rect(ctx, fx - 0.01 * h, fy - 0.12 * h, 0.12 * h, 0.15 * h, INK, radius=0.01 * h)
+    elif prop == "magnifier":
+        line(ctx, [(fx, fy), (fx + 0.05 * h, fy - 0.07 * h)], DARK, 0.018 * h)
+        ctx.new_path()
+        ctx.arc(fx + 0.075 * h, fy - 0.11 * h, 0.04 * h, 0, 2 * math.pi)
+        set_color(ctx, SKY, 0.8)
+        ctx.fill_preserve()
+        set_color(ctx, DARK)
+        ctx.set_line_width(0.012 * h)
+        ctx.stroke()
 
-    # head + hair cap
-    def head(c):
-        c.arc(0, head_y, r, 0, 2 * math.pi)
-    draw_shapes(ctx, [Shape(head, fill=CREAM)], 1, 1, line_width=LINE * 0.9)
+    # head: skin disc, nose, eye, hair
+    disc(ctx, 0, head_cy, r, skin)
+    poly(ctx, [(r * 0.85, head_cy - r * 0.15), (r * 1.25, head_cy + r * 0.2), (r * 0.8, head_cy + r * 0.25)], skin)
+    disc(ctx, r * 0.45, head_cy - r * 0.1, r * 0.09, DARK)
     ctx.new_path()
     if hardhat:
-        ctx.arc(0, head_y - r * 0.05, r * 1.08, math.pi, 2 * math.pi)
-        ctx.rectangle(-r * 1.3, head_y - r * 0.12, r * 2.6, r * 0.22)
-        set_color(ctx, OCHRE)
-        ctx.fill_preserve()
-        set_color(ctx, NAVY)
-        ctx.set_line_width(LINE * 0.8)
-        ctx.stroke()
+        ctx.arc(0, head_cy - r * 0.15, r * 1.05, math.pi, 2 * math.pi)
+        ctx.close_path()
+        set_color(ctx, GOLD)
+        ctx.fill()
+        rect(ctx, -r * 1.2, head_cy - r * 0.2, r * 2.6, r * 0.22, mix(GOLD, DARK, 0.2), radius=r * 0.1)
+    elif hair_style == "bun":
+        ctx.arc(0, head_cy, r * 1.02, math.pi * 0.95, math.pi * 1.95)
+        ctx.close_path()
+        set_color(ctx, hair)
+        ctx.fill()
+        disc(ctx, -r * 0.95, head_cy - r * 0.55, r * 0.42, hair)
     else:
-        ctx.arc(0, head_y, r, math.pi * 1.02, math.pi * 1.98)
-        ctx.curve_to(r * 0.9, head_y - r * 0.2, r * 0.2, head_y - r * 0.55, -r * 0.3, head_y - r * 0.3)
+        ctx.arc(0, head_cy, r * 1.02, math.pi * 0.9, math.pi * 1.9)
+        ctx.line_to(-r * 0.2, head_cy - r * 0.2)
+        ctx.line_to(-r * 1.0, head_cy + r * 0.25)
         ctx.close_path()
         set_color(ctx, hair)
         ctx.fill()
@@ -457,144 +506,142 @@ def person(ctx, x, feet_y, h, shirt, walk=0.0, facing=1, arms="down", hardhat=Fa
 
 
 # ---------------------------------------------------------------- architecture
-def historic_facade(ctx, x, base_y, w, h, body=OCHRE, line_p=1.0, fill_p=1.0, window_fill=COBALT, shutters=0.0):
-    """Colonial two-storey facade with ground-floor arcade: the Historic Center's building type."""
-    top = base_y - h
-    arcade_h = h * 0.42
-    shapes = []
-    shapes.append(Shape(lambda c: c.rectangle(x, top, w, h), fill=body))
-    shapes.append(Shape(lambda c: c.rectangle(x - w * 0.03, top - h * 0.05, w * 1.06, h * 0.05), fill=CREAM))
-    def pediment(c):
-        c.move_to(x + w * 0.36, top - h * 0.05)
-        c.line_to(x + w * 0.5, top - h * 0.16)
-        c.line_to(x + w * 0.64, top - h * 0.05)
-        c.close_path()
-    shapes.append(Shape(pediment, fill=CREAM))
-    shapes.append(Shape(lambda c: (c.move_to(x, base_y - arcade_h), c.line_to(x + w, base_y - arcade_h))))
-    bay_w = w / 3
-    for i in range(3):
-        ax = x + bay_w * i + bay_w * 0.16
-        aw = bay_w * 0.68
-        ah = arcade_h * 0.8
-        def arch(c, ax=ax, aw=aw, ah=ah):
-            c.move_to(ax, base_y)
-            c.line_to(ax, base_y - ah + aw / 2)
-            c.arc(ax + aw / 2, base_y - ah + aw / 2, aw / 2, math.pi, 2 * math.pi)
-            c.line_to(ax + aw, base_y)
-        shapes.append(Shape(arch, fill=NAVY if i == 1 else CREAM))
-        wx = x + bay_w * i + bay_w * 0.26
-        ww = bay_w * 0.48
-        wy = top + h * 0.12
-        wh = h * 0.3
-        fill = NAVY if shutters > (i + 1) / 3.5 else window_fill
-        shapes.append(Shape(lambda c, wx=wx, wy=wy, ww=ww, wh=wh: c.rectangle(wx, wy, ww, wh), fill=fill))
-        def rail(c, wx=wx, wy=wy, ww=ww, wh=wh):
-            c.move_to(wx - ww * 0.12, wy + wh + h * 0.02)
-            c.line_to(wx + ww * 1.12, wy + wh + h * 0.02)
-        shapes.append(Shape(rail))
-    draw_shapes(ctx, shapes, line_p, fill_p)
-
-def storefront(ctx, x, base_y, w, h, body=TEAL, awning=TERRACOTTA, line_p=1.0, fill_p=1.0, sign=None):
-    top = base_y - h
-    shapes = [Shape(lambda c: c.rectangle(x, top, w, h), fill=body),
-              Shape(lambda c: c.rectangle(x + w * 0.06, top + h * 0.08, w * 0.88, h * 0.16), fill=CREAM)]
-    stripes = 5
-    for i in range(stripes):
-        sx = x + w * 0.02 + i * w * 0.96 / stripes
-        sw = w * 0.96 / stripes
-        def stripe(c, sx=sx, sw=sw):
-            c.move_to(sx, top + h * 0.3)
-            c.line_to(sx + sw, top + h * 0.3)
-            c.line_to(sx + sw, top + h * 0.4)
-            c.arc(sx + sw / 2, top + h * 0.4, sw / 2, 0, math.pi)
-            c.close_path()
-        shapes.append(Shape(stripe, fill=awning if i % 2 == 0 else CREAM))
-    shapes.append(Shape(lambda c: c.rectangle(x + w * 0.08, top + h * 0.52, w * 0.5, h * 0.36), fill=COBALT))
-    shapes.append(Shape(lambda c: c.rectangle(x + w * 0.66, top + h * 0.5, w * 0.24, h * 0.5), fill=NAVY))
-    draw_shapes(ctx, shapes, line_p, fill_p)
-    if sign and fill_p > 0.5:
-        text(ctx, sign, x + w / 2, top + h * 0.2, FONT_BODY_SEMI, h * 0.075, NAVY, "center", alpha=prog(fill_p, 0.5, 0.5), tracking=h * 0.01)
-
-def office_block(ctx, x, base_y, w, h, body=COBALT, line_p=1.0, fill_p=1.0):
-    top = base_y - h
-    shapes = [Shape(lambda c: c.rectangle(x, top, w, h), fill=body)]
-    cols, rows = 3, 5
+def window_grid(ctx, x, y, w, h, cols, rows, color, gap=0.35):
+    """Fine window rhythm drawn as small flat bars (the facade texture)."""
+    cw, rh = w / cols, h / rows
     for r in range(rows):
-        for col in range(cols):
-            wx = x + w * 0.14 + col * w * 0.26
-            wy = top + h * 0.08 + r * h * 0.16
-            shapes.append(Shape(lambda c, wx=wx, wy=wy: c.rectangle(wx, wy, w * 0.16, h * 0.09), fill=CREAM))
-    draw_shapes(ctx, shapes, line_p, fill_p)
+        for c in range(cols):
+            rect(ctx, x + c * cw + cw * gap / 2, y + r * rh + rh * 0.18, cw * (1 - gap), rh * 0.62, color)
 
-def crane(ctx, x, base_y, h, line_p=1.0, hook_y=0.5, color=NAVY):
-    """Tower crane: lattice mast, jib, counter-jib with weight, apex ties, and a hanging load."""
-    m = h * 0.035  # half mast width
-    p_mast, p_jib, p_ties = clamp(line_p * 2.2), clamp(line_p * 2.2 - 1.0), clamp(line_p * 2.2 - 1.6)
-    top = base_y - h
+def facade(ctx, x, base, w, h, color, style="grid", p=1.0, dim=0.0):
+    """Flat building. style: grid (modern block) | colonial (arcade + balconies) | market (arched hall).
+    p grows it from the ground; dim fades it toward the quiet grey (a 'weak' street)."""
+    if p <= 0:
+        return
+    body = mix(color, RULE, dim)
+    dark = mix(body, INK, 0.28)
+    light = mix(body, WHITE, 0.45)
+    top = base - h
+    with grow(ctx, x + w / 2, base, p):
+        rect(ctx, x, top, w, h, body)
+        if style == "grid":
+            rect(ctx, x - 4, top, w + 8, h * 0.05, dark)
+            window_grid(ctx, x + w * 0.08, top + h * 0.1, w * 0.84, h * 0.7, max(3, int(w / 34)), max(4, int(h / 46)), light)
+            rect(ctx, x + w * 0.4, base - h * 0.14, w * 0.2, h * 0.14, dark)
+        elif style == "colonial":
+            rect(ctx, x - w * 0.03, top - h * 0.05, w * 1.06, h * 0.06, dark)
+            poly(ctx, [(x + w * 0.35, top - h * 0.05), (x + w * 0.5, top - h * 0.15), (x + w * 0.65, top - h * 0.05)], dark)
+            bay = w / 3
+            for i in range(3):
+                wx = x + bay * i + bay * 0.28
+                rect(ctx, wx, top + h * 0.12, bay * 0.44, h * 0.26, light)
+                rect(ctx, wx - bay * 0.08, top + h * 0.38, bay * 0.6, h * 0.025, dark)
+                ax, aw, ah = x + bay * i + bay * 0.18, bay * 0.64, h * 0.36
+                ctx.new_path()
+                ctx.move_to(ax, base)
+                ctx.line_to(ax, base - ah + aw / 2)
+                ctx.arc(ax + aw / 2, base - ah + aw / 2, aw / 2, math.pi, 2 * math.pi)
+                ctx.line_to(ax + aw, base)
+                ctx.close_path()
+                set_color(ctx, dark if i == 1 else light)
+                ctx.fill()
+        elif style == "market":
+            rect(ctx, x - 6, top, w + 12, h * 0.08, dark)
+            for i in range(4):
+                ax, aw = x + w * (0.06 + i * 0.235), w * 0.19
+                ctx.new_path()
+                ctx.move_to(ax, base - h * 0.08)
+                ctx.line_to(ax, base - h * 0.55 + aw / 2)
+                ctx.arc(ax + aw / 2, base - h * 0.55 + aw / 2, aw / 2, math.pi, 2 * math.pi)
+                ctx.line_to(ax + aw, base - h * 0.08)
+                ctx.close_path()
+                set_color(ctx, light)
+                ctx.fill()
+            window_grid(ctx, x + w * 0.08, top + h * 0.12, w * 0.84, h * 0.2, 8, 1, light)
+
+def storefront(ctx, x, base, w, h, color, awning=CORAL, p=1.0, sign=None):
+    if p <= 0:
+        return
+    top = base - h
+    dark = mix(color, INK, 0.28)
+    with grow(ctx, x + w / 2, base, p):
+        rect(ctx, x, top, w, h, color)
+        rect(ctx, x + w * 0.08, top + h * 0.08, w * 0.84, h * 0.16, WHITE)
+        # striped awning (diagonal stripes, flat)
+        ay, ah = top + h * 0.3, h * 0.12
+        rect(ctx, x - w * 0.03, ay, w * 1.06, ah, awning)
+        ctx.save()
+        ctx.rectangle(x - w * 0.03, ay, w * 1.06, ah)
+        ctx.clip()
+        for k in range(-2, 14):
+            sx = x + k * w * 0.1
+            poly(ctx, [(sx, ay + ah), (sx + w * 0.04, ay + ah), (sx + w * 0.04 + ah, ay), (sx + ah, ay)], WHITE, 0.55)
+        ctx.restore()
+        rect(ctx, x + w * 0.08, top + h * 0.52, w * 0.5, h * 0.34, SKY)
+        rect(ctx, x + w * 0.66, top + h * 0.5, w * 0.24, h * 0.5, dark)
+        if sign:
+            text(ctx, sign, x + w / 2, top + h * 0.2, SANS_SEMI, h * 0.075, INK, "center", tracking=h * 0.008, label=None)
+
+def crane(ctx, x, base, h, p=1.0, hook=0.5, color=INK):
+    """Tower crane in hairlines (like the fine instruments in the reference spreads)."""
+    m = h * 0.035
+    top = base - h
+    pm, pj, pt = clamp(p * 2.2), clamp(p * 2.2 - 1.0), clamp(p * 2.2 - 1.6)
     for dx in (-m, m):
-        stroke_polyline(ctx, partial_polyline([(x + dx, base_y), (x + dx, top)], p_mast), color, LINE)
-    zig = [(x + (m if i % 2 else -m), base_y - h * i / 12) for i in range(13)]
-    stroke_polyline(ctx, partial_polyline(zig, p_mast), color, LINE * 0.6)
-    stroke_polyline(ctx, partial_polyline([(x - h * 0.24, top), (x + h * 0.72, top)], p_jib), color, LINE * 1.2)
-    stroke_polyline(ctx, partial_polyline([(x - h * 0.24, top + h * 0.035), (x + h * 0.72, top + h * 0.035)], p_jib), color, LINE * 0.7)
-    stroke_polyline(ctx, partial_polyline([(x - h * 0.24, top), (x, top - h * 0.14), (x + h * 0.72, top)], p_ties), color, LINE * 0.7)
-    if p_jib >= 1:
-        ctx.rectangle(x - h * 0.23, top + h * 0.035, h * 0.09, h * 0.07)
-        set_color(ctx, TERRACOTTA)
-        ctx.fill_preserve()
-        set_color(ctx, NAVY)
-        ctx.set_line_width(LINE * 0.8)
-        ctx.stroke()
-    if p_ties >= 1:
-        hx = x + h * 0.5
-        hy = top + h * 0.1 + h * 0.45 * hook_y
-        stroke_polyline(ctx, [(hx, top + h * 0.035), (hx, hy)], color, LINE * 0.7)
-        ctx.rectangle(hx - h * 0.06, hy, h * 0.12, h * 0.07)
-        set_color(ctx, OCHRE)
-        ctx.fill_preserve()
-        set_color(ctx, NAVY)
-        ctx.set_line_width(LINE * 0.8)
-        ctx.stroke()
+        line(ctx, partial_polyline([(x + dx, base), (x + dx, top)], pm), color, 2.2)
+    zig = [(x + (m if i % 2 else -m), base - h * i / 12) for i in range(13)]
+    line(ctx, partial_polyline(zig, pm), color, 1.4)
+    line(ctx, partial_polyline([(x - h * 0.24, top), (x + h * 0.72, top)], pj), color, 2.2)
+    line(ctx, partial_polyline([(x - h * 0.24, top + h * 0.035), (x + h * 0.72, top + h * 0.035)], pj), color, 1.4)
+    line(ctx, partial_polyline([(x - h * 0.24, top), (x, top - h * 0.14), (x + h * 0.72, top)], pt), color, 1.4)
+    if pj >= 1:
+        rect(ctx, x - h * 0.23, top + h * 0.035, h * 0.09, h * 0.08, RED)
+    if pt >= 1:
+        hx, hy = x + h * 0.5, top + h * 0.12 + h * 0.4 * hook
+        line(ctx, [(hx, top + h * 0.035), (hx, hy)], color, 1.4)
+        rect(ctx, hx - h * 0.07, hy, h * 0.14, h * 0.07, GOLD)
 
-def scaffold(ctx, x, base_y, w, h, p=1.0):
+def scaffold(ctx, x, base, w, h, p=1.0):
     levels = 4
     for i in range(levels + 1):
-        yy = base_y - h * i / levels
-        stroke_polyline(ctx, partial_polyline([(x, yy), (x + w, yy)], clamp(p * 2 - i * 0.2)), NAVY, LINE * 0.8)
+        yy = base - h * i / levels
+        line(ctx, partial_polyline([(x, yy), (x + w, yy)], clamp(p * 2 - i * 0.2)), INK, 2)
     for j in range(4):
         xx = x + w * j / 3
-        stroke_polyline(ctx, partial_polyline([(xx, base_y), (xx, base_y - h)], clamp(p * 1.6 - j * 0.1)), NAVY, LINE * 0.8)
+        line(ctx, partial_polyline([(xx, base), (xx, base - h)], clamp(p * 1.6 - j * 0.1)), INK, 2)
     for i in range(levels):
         for j in range(3):
             if (i + j) % 2 == 0:
-                a = (x + w * j / 3, base_y - h * i / levels)
-                b = (x + w * (j + 1) / 3, base_y - h * (i + 1) / levels)
-                stroke_polyline(ctx, partial_polyline([a, b], clamp(p * 2 - 1 - i * 0.1)), NAVY, LINE * 0.5)
+                a = (x + w * j / 3, base - h * i / levels)
+                b = (x + w * (j + 1) / 3, base - h * (i + 1) / levels)
+                line(ctx, partial_polyline([a, b], clamp(p * 2 - 1 - i * 0.1)), INK, 1.2)
+
+def tree(ctx, x, base, h, color=GREEN):
+    rect(ctx, x - h * 0.04, base - h * 0.4, h * 0.08, h * 0.4, mix(color, DARK, 0.4))
+    disc(ctx, x, base - h * 0.62, h * 0.3, color)
+
+def lamp(ctx, x, base, h):
+    line(ctx, [(x, base), (x, base - h)], DARK, 2.4)
+    disc(ctx, x, base - h, h * 0.07, GOLD)
 
 
 # ---------------------------------------------------------------- documents & icons
-def document(ctx, x, y, w, h, fill=CREAM, lines=5, line_p=1.0, fill_p=1.0, rotate=0.0):
+def document(ctx, x, y, w, h, lines=5, p=1.0, rotate=0.0, fill=WHITE):
+    if p <= 0:
+        return
     ctx.save()
     ctx.translate(x + w / 2, y + h / 2)
     ctx.rotate(rotate)
     ctx.translate(-w / 2, -h / 2)
-    fold = w * 0.18
-    def sheet(c):
-        c.move_to(0, 0)
-        c.line_to(w - fold, 0)
-        c.line_to(w, fold)
-        c.line_to(w, h)
-        c.line_to(0, h)
-        c.close_path()
-    shapes = [Shape(sheet, fill=fill), Shape(lambda c: (c.move_to(w - fold, 0), c.line_to(w - fold, fold), c.line_to(w, fold)))]
+    fold = w * 0.2
+    poly(ctx, [(0, 0), (w - fold, 0), (w, fold), (w, h), (0, h)], fill, p)
+    poly(ctx, [(w - fold, 0), (w, fold), (w - fold, fold)], RULE, p)
     for i in range(lines):
-        ly = h * 0.22 + i * h * 0.12
-        lw = w * (0.62 if i % 3 == 2 else 0.74)
-        shapes.append(Shape(lambda c, ly=ly, lw=lw: (c.move_to(w * 0.13, ly), c.line_to(w * 0.13 + lw, ly)), line_width=LINE * 0.7))
-    draw_shapes(ctx, shapes, line_p, fill_p)
+        lw = w * (0.55 if i % 3 == 2 else 0.72) * clamp(p * 1.5 - i * 0.1)
+        rect(ctx, w * 0.13, h * 0.24 + i * h * 0.12, lw, h * 0.03, RULE)
     ctx.restore()
 
-def stamp(ctx, cx, cy, r, p, label="QUALIFIED", fill=TEAL):
+def stamp(ctx, cx, cy, r, p, label="QUALIFIED", fill=GREEN):
     """Approval stamp that lands with a small overshoot."""
     if p <= 0:
         return
@@ -604,94 +651,83 @@ def stamp(ctx, cx, cy, r, p, label="QUALIFIED", fill=TEAL):
     ctx.translate(cx, cy)
     ctx.rotate(-0.16)
     ctx.scale(s, s)
-    ctx.arc(0, 0, r, 0, 2 * math.pi)
-    set_color(ctx, fill, a)
-    ctx.fill_preserve()
-    set_color(ctx, NAVY, a)
-    ctx.set_line_width(LINE)
-    ctx.stroke()
+    disc(ctx, 0, 0, r, fill, a)
+    ctx.new_path()
     ctx.arc(0, 0, r * 0.8, 0, 2 * math.pi)
-    ctx.set_line_width(LINE * 0.6)
+    set_color(ctx, WHITE, 0.6 * a)
+    ctx.set_line_width(2)
     ctx.stroke()
-    check_mark(ctx, 0, -r * 0.18, r * 0.62, clamp((p - 0.4) / 0.4))
-    text(ctx, label, 0, r * 0.5, FONT_BODY_SEMI, r * 0.2, NAVY, "center", alpha=a, tracking=r * 0.02, label=None)
+    check_mark(ctx, 0, -r * 0.16, r * 0.6, clamp((p - 0.4) / 0.4))
+    text(ctx, label, 0, r * 0.5, SANS_SEMI, r * 0.19, WHITE, "center", alpha=a, tracking=r * 0.02, label=None)
     ctx.restore()
 
-def calendar_icon(ctx, x, y, w, h, flip=0.0, fill=TERRACOTTA):
-    shapes = [Shape(lambda c: c.rectangle(x, y, w, h), fill=CREAM),
-              Shape(lambda c: c.rectangle(x, y, w, h * 0.24), fill=fill)]
+def calendar(ctx, x, y, w, h, crossed=0.0, head=CORAL):
+    rect(ctx, x, y, w, h, WHITE)
+    rect(ctx, x, y, w, h * 0.24, head)
     for i in range(3):
         for j in range(4):
-            cx = x + w * (0.15 + j * 0.23)
-            cy = y + h * (0.38 + i * 0.2)
-            shapes.append(Shape(lambda c, cx=cx, cy=cy: c.rectangle(cx, cy, w * 0.12, h * 0.1),
-                                fill=NAVY if (i * 4 + j) < flip * 12 else None, line_width=LINE * 0.6))
-    draw_shapes(ctx, shapes)
+            cx, cy = x + w * (0.13 + j * 0.2), y + h * (0.36 + i * 0.2)
+            n = i * 4 + j
+            rect(ctx, cx, cy, w * 0.14, h * 0.12, CORAL if n < crossed * 12 else RULE)
     for dx in (0.28, 0.72):
-        stroke_polyline(ctx, [(x + w * dx, y - h * 0.08), (x + w * dx, y + h * 0.08)], NAVY, LINE * 1.2)
+        line(ctx, [(x + w * dx, y - h * 0.08), (x + w * dx, y + h * 0.1)], DARK, 4)
 
-def utility_pole(ctx, x, base_y, h, p=1.0, sway=0.0):
-    stroke_polyline(ctx, partial_polyline([(x, base_y), (x, base_y - h)], clamp(p * 2)), NAVY, LINE * 1.6)
-    stroke_polyline(ctx, partial_polyline([(x - h * 0.22, base_y - h * 0.88), (x + h * 0.22, base_y - h * 0.88)], clamp(p * 2 - 0.6)), NAVY, LINE * 1.3)
+def utility_pole(ctx, x, base, h, p=1.0, sway=0.0):
+    line(ctx, partial_polyline([(x, base), (x, base - h)], clamp(p * 2)), DARK, 4)
+    line(ctx, partial_polyline([(x - h * 0.22, base - h * 0.88), (x + h * 0.22, base - h * 0.88)], clamp(p * 2 - 0.6)), DARK, 3.4)
     for dx in (-0.18, 0.0, 0.18):
         if p > 0.6:
-            sx, sy = x + h * dx, base_y - h * 0.88
-            ex, ey = x + h * 0.95, base_y - h * (0.62 + dx * 0.2)
-            pts = [(sx + (ex - sx) * k / 12, sy + (ey - sy) * k / 12 + math.sin(math.pi * k / 12) * h * (0.08 + sway * 0.03)) for k in range(13)]
-            stroke_polyline(ctx, partial_polyline(pts, clamp((p - 0.6) / 0.4)), NAVY, LINE * 0.6)
-    for dx in (-0.18, 0.0, 0.18):
-        ctx.arc(x + h * dx, base_y - h * 0.9, h * 0.022, 0, 2 * math.pi)
-        set_color(ctx, OCHRE)
-        ctx.fill_preserve()
-        set_color(ctx, NAVY)
-        ctx.set_line_width(LINE * 0.6)
-        ctx.stroke()
+            sx, sy = x + h * dx, base - h * 0.88
+            ex, ey = x + h * 0.95, base - h * (0.62 + dx * 0.2)
+            pts = [(sx + (ex - sx) * k / 12, sy + (ey - sy) * k / 12 + math.sin(math.pi * k / 12) * h * (0.08 + sway * 0.03))
+                   for k in range(13)]
+            line(ctx, partial_polyline(pts, clamp((p - 0.6) / 0.4)), INK, 1.4)
+        disc(ctx, x + h * dx, base - h * 0.9, h * 0.024, GOLD)
 
-def aurora_mark(ctx, cx, base_y, r, color_fill=OCHRE, line_color=NAVY, p=1.0):
-    """Original wordmark glyph: a rising half-sun over a horizon line (aurora = dawn)."""
+def aurora_mark(ctx, cx, base_y, r, fill=ORANGE, horizon=INK):
+    """Original wordmark glyph: a rising half-sun on a horizon (aurora = dawn)."""
     ctx.new_path()
-    ctx.arc(cx, base_y, r * ease_out(clamp(p)), math.pi, 2 * math.pi)
+    ctx.arc(cx, base_y, r, math.pi, 2 * math.pi)
     ctx.close_path()
-    set_color(ctx, color_fill)
-    ctx.fill_preserve()
-    set_color(ctx, line_color)
-    ctx.set_line_width(max(2, r * 0.12))
-    ctx.stroke()
-    stroke_polyline(ctx, [(cx - r * 1.35, base_y), (cx + r * 1.35, base_y)], line_color, max(2, r * 0.12))
+    set_color(ctx, fill)
+    ctx.fill()
+    line(ctx, [(cx - r * 1.35, base_y + r * 0.08), (cx + r * 1.35, base_y + r * 0.08)], horizon, max(2, r * 0.14),
+         cap=cairo.LINE_CAP_BUTT)
 
-def wordmark(ctx, x, y, size, color=NAVY, fill=OCHRE, alpha=1.0, align="left"):
-    """'Aurora' text wordmark with the dawn glyph. y is the text baseline. Returns total width."""
+def wordmark(ctx, x, y, size, color=INK, fill=ORANGE, alpha=1.0, align="left"):
+    """'Aurora' text wordmark with the dawn glyph. y is the baseline. Returns total width."""
     r = size * 0.36
-    word_w = text_width(ctx, "Aurora", FONT_HEAD, size)
-    total = r * 2.7 + size * 0.28 + word_w
+    word_w = text_width(ctx, "Aurora", SANS_BOLD, size)
+    total = r * 2.7 + size * 0.26 + word_w
     if align == "center":
         x -= total / 2
     ctx.save()
     ctx.push_group()
-    aurora_mark(ctx, x + r * 1.35, y - size * 0.08, r, fill, color)
-    text(ctx, "Aurora", x + r * 2.7 + size * 0.28, y, FONT_HEAD, size, color, label="wordmark")
+    aurora_mark(ctx, x + r * 1.35, y - size * 0.06, r, fill, color)
+    text(ctx, "Aurora", x + r * 2.7 + size * 0.26, y, SANS_BOLD, size, color, label="wordmark")
     ctx.pop_group_to_source()
     ctx.paint_with_alpha(alpha)
     ctx.restore()
     return total
 
 
-# ---------------------------------------------------------------- city plan
+# ---------------------------------------------------------------- block map
 class CityPlan:
-    """Abstract street grid with a defined, irregular perimeter drawn on street centerlines."""
-    def __init__(self, x, y, w, h, cols=7, rows=5, gap=18,
-                 perimeter=((1, 1), (5, 1), (5, 2), (6, 2), (6, 4), (2, 4), (2, 3), (1, 3))):
+    """Abstract street grid. Blocks inside the defined perimeter fill orange; the rest stay quiet grey.
+    White gaps between blocks read as streets, exactly like the district maps in the reference."""
+    def __init__(self, x, y, w, h, cols=8, rows=6, gap=7,
+                 perimeter=((1, 1), (6, 1), (6, 2), (7, 2), (7, 5), (3, 5), (3, 4), (1, 4))):
         self.x, self.y, self.w, self.h = x, y, w, h
         self.cols, self.rows, self.gap = cols, rows, gap
-        self.bw = (w - (cols + 1) * gap) / cols
-        self.bh = (h - (rows + 1) * gap) / rows
+        self.bw = (w - (cols - 1) * gap) / cols
+        self.bh = (h - (rows - 1) * gap) / rows
         self.perimeter = [self.node(c, r) for c, r in perimeter]
 
     def node(self, c, r):
-        return (self.x + self.gap / 2 + c * (self.bw + self.gap), self.y + self.gap / 2 + r * (self.bh + self.gap))
+        return (self.x + c * (self.bw + self.gap) - self.gap / 2, self.y + r * (self.bh + self.gap) - self.gap / 2)
 
     def block_rect(self, c, r):
-        return (self.x + self.gap + c * (self.bw + self.gap), self.y + self.gap + r * (self.bh + self.gap), self.bw, self.bh)
+        return (self.x + c * (self.bw + self.gap), self.y + r * (self.bh + self.gap), self.bw, self.bh)
 
     def block_center(self, c, r):
         bx, by, bw, bh = self.block_rect(c, r)
@@ -699,36 +735,28 @@ class CityPlan:
 
     def inside(self, c, r):
         px, py = self.block_center(c, r)
-        poly, hit = self.perimeter, False
-        for i in range(len(poly)):
-            (x1, y1), (x2, y2) = poly[i], poly[(i + 1) % len(poly)]
+        poly_, hit = self.perimeter, False
+        for i in range(len(poly_)):
+            (x1, y1), (x2, y2) = poly_[i], poly_[(i + 1) % len(poly_)]
             if (y1 > py) != (y2 > py) and px < (x2 - x1) * (py - y1) / (y2 - y1) + x1:
                 hit = not hit
         return hit
 
-    def draw(self, ctx, t_grid=1.0, t_perimeter=1.0, t_fill=1.0, inside_fill=TEAL, highlight=None, dim_outside=False):
+    def draw(self, ctx, t_grid=1.0, t_fill=1.0, zone=ORANGE, quiet=RULE, highlight=None, t_outline=0.0):
         blocks = [(c, r) for r in range(self.rows) for c in range(self.cols)]
         for i, (c, r) in enumerate(blocks):
-            bp = clamp(t_grid * 1.6 - i / len(blocks) * 0.6)
+            bp = clamp(t_grid * 1.8 - (c + r) / (self.cols + self.rows) * 0.8)
             if bp <= 0:
                 continue
             bx, by, bw, bh = self.block_rect(c, r)
-            fp = 0.0
+            color = quiet
             if self.inside(c, r):
-                order = (c + r) / (self.cols + self.rows)
-                fp = clamp(t_fill * 1.8 - order)
+                fp = ease_out(clamp(t_fill * 1.8 - (c + r) / (self.cols + self.rows) * 0.8))
+                color = mix(quiet, zone, fp)
             if highlight and (c, r) in highlight:
-                fp = highlight[(c, r)][1]
-            draw_shapes(ctx, [Shape(lambda cc, bx=bx, by=by, bw=bw, bh=bh: rounded_rect(cc, bx, by, bw, bh, 4), fill=CREAM)], bp, bp, LINE * 0.7)
-            if fp > 0:
-                ctx.save()
-                rounded_rect(ctx, bx, by, bw, bh, 4)
-                ctx.clip()
-                ctx.rectangle(bx, by + bh * (1 - ease_out(fp)), bw, bh)
-                set_color(ctx, highlight[(c, r)][0] if highlight and (c, r) in highlight else inside_fill)
-                ctx.fill()
-                ctx.restore()
-                draw_shapes(ctx, [Shape(lambda cc, bx=bx, by=by, bw=bw, bh=bh: rounded_rect(cc, bx, by, bw, bh, 4))], 1, 0, LINE * 0.7)
-        if t_perimeter > 0:
-            pts = partial_polyline(self.perimeter, t_perimeter, closed=True)
-            stroke_polyline(ctx, pts, NAVY, LINE * 1.4, dash=[14, 9])
+                hc, hp = highlight[(c, r)]
+                color = mix(color, hc, ease_out(clamp(hp)))
+            with pop(ctx, bx + bw / 2, by + bh / 2, bp, 1.1):
+                rect(ctx, bx, by, bw, bh, color)
+        if t_outline > 0:  # optional coral trace of the perimeter
+            line(ctx, partial_polyline(self.perimeter, t_outline, closed=True), CORAL, 2.4, dash=[10, 7])

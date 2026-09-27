@@ -55,4 +55,4 @@
 1. Reading P1, P2 or P3 in full (egress policy 403). This covers current applicability, any sunset or application deadlines, amendments after November 2025, and the exact beneficiary definition.
 2. Confirming whether the legal perimeter matches press descriptions ("70 blocks").
 3. Confirming the role, if any, of the Ministerio de Hacienda / DGII in granting or registering the exemption.
-4. Viewing the Behance SURES reference (https://www.behance.net/gallery/113756431/SURES), also blocked (403). The art direction was built from the brief's written description (geometric figures, thin outlines, architectural shapes, coordinated color panels). No artwork or logo from it was reproduced.
+4. Viewing the Behance design references (SURES; Madrid en Cifras 2020, https://www.behance.net/gallery/122021797/Madrid-en-Cifras-2020). Both are blocked (403) from this environment. The final style follows screenshots of Madrid en Cifras 2020 that you supplied. The artwork is original: no illustrations, maps, layouts or logos were reproduced.
