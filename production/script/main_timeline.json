@@ -1,0 +1,171 @@
+{
+  "id": "main",
+  "sample_rate": 24000,
+  "scenes": [
+    {
+      "id": "hook",
+      "chapter": "",
+      "start": 0.0,
+      "lines": [
+        {
+          "text": "A tax incentive can improve your return.",
+          "start": 0.4,
+          "end": 2.467
+        },
+        {
+          "text": "But can it turn a weak location into a good investment?",
+          "start": 2.747,
+          "end": 5.509
+        }
+      ],
+      "end": 5.759
+    },
+    {
+      "id": "promise",
+      "chapter": "In this film",
+      "start": 5.759,
+      "lines": [
+        {
+          "text": "Here's which incentive applies, who receives the benefit, and what remains after location and execution costs.",
+          "start": 6.009,
+          "end": 11.518
+        }
+      ],
+      "end": 11.768
+    },
+    {
+      "id": "opportunity",
+      "chapter": "01 \u00b7 The opportunity",
+      "start": 11.768,
+      "lines": [
+        {
+          "text": "In El Salvador, qualifying new investments in San Salvador's defined Historic Center may receive up to ten years of income-tax relief.",
+          "start": 12.018,
+          "end": 19.611
+        },
+        {
+          "text": "That's a specific regime for a specific area, separate from nationwide programs.",
+          "start": 19.891,
+          "end": 24.225
+        },
+        {
+          "text": "Not every business qualifies, so verify current rules before underwriting.",
+          "start": 24.505,
+          "end": 28.422
+        }
+      ],
+      "end": 28.672
+    },
+    {
+      "id": "checks",
+      "chapter": "02 \u00b7 Three checks",
+      "start": 28.672,
+      "lines": [
+        {
+          "text": "Start with three checks.",
+          "start": 28.922,
+          "end": 30.11
+        },
+        {
+          "text": "First, exact location: inside the defined perimeter. One block outside can change the answer.",
+          "start": 30.39,
+          "end": 35.855
+        },
+        {
+          "text": "Second, a qualifying investment: an eligible activity, like food, lodging, or restoration, above the minimum.",
+          "start": 36.135,
+          "end": 42.191
+        },
+        {
+          "text": "Third, approval: the Historic Center's Planning Authority must qualify the project. No approval, no benefit.",
+          "start": 42.471,
+          "end": 48.306
+        }
+      ],
+      "end": 48.556
+    },
+    {
+      "id": "beneficiary",
+      "chapter": "03 \u00b7 Who benefits",
+      "start": 48.556,
+      "lines": [
+        {
+          "text": "Then ask: which entity receives the benefit?",
+          "start": 48.806,
+          "end": 50.985
+        },
+        {
+          "text": "Owner, operator, and developer are often different companies.",
+          "start": 51.265,
+          "end": 54.593
+        },
+        {
+          "text": "A landlord's qualification doesn't automatically lower a tenant's taxes.",
+          "start": 54.873,
+          "end": 58.744
+        }
+      ],
+      "end": 58.994
+    },
+    {
+      "id": "economics",
+      "chapter": "04 \u00b7 The arithmetic",
+      "start": 58.994,
+      "lines": [
+        {
+          "text": "Here's a simplified, hypothetical annual after-tax comparison.",
+          "start": 59.244,
+          "end": 62.795
+        },
+        {
+          "text": "Thirty thousand dollars of assumed tax savings, minus twenty-four thousand in additional after-tax occupancy costs, leaves six thousand a year.",
+          "start": 63.075,
+          "end": 70.715
+        },
+        {
+          "text": "It excludes other cost, timing, and risk differences. It's not a Salvadoran tax calculation, or a promised return.",
+          "start": 70.995,
+          "end": 77.769
+        }
+      ],
+      "end": 78.019
+    },
+    {
+      "id": "execution",
+      "chapter": "05 \u00b7 Execution",
+      "start": 78.019,
+      "lines": [
+        {
+          "text": "Execution still matters: demand, permits, utilities, and opening delays can erase a thin advantage.",
+          "start": 78.269,
+          "end": 83.925
+        },
+        {
+          "text": "So underwrite the base case without incentives, then show the qualified benefit separately.",
+          "start": 84.205,
+          "end": 88.692
+        }
+      ],
+      "end": 88.942
+    },
+    {
+      "id": "close",
+      "chapter": "",
+      "start": 88.942,
+      "lines": [
+        {
+          "text": "Subscribe to Aurora for illustrated breakdowns of incentives, locations, and the real cost to open.",
+          "start": 89.192,
+          "end": 94.612
+        },
+        {
+          "text": "Next: who receives the benefit \u2014 the owner, operator, or developer?",
+          "start": 94.892,
+          "end": 98.311
+        }
+      ],
+      "end": 99.511
+    }
+  ],
+  "duration": 99.511
+}

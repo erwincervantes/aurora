@@ -1,0 +1,86 @@
+{
+  "id": "main",
+  "title": "El Salvador Tax Incentives: Who Qualifies for Up to 10 Years of Relief?",
+  "voice": {
+    "model": "Kokoro-82M v0.19 int8 (sherpa-onnx)",
+    "speaker": "af_sarah",
+    "sid": 3,
+    "speed": 1.1
+  },
+  "scenes": [
+    {
+      "id": "hook",
+      "chapter": "",
+      "lines": [
+        "A tax incentive can improve your return.",
+        "But can it turn a weak location into a good investment?"
+      ]
+    },
+    {
+      "id": "promise",
+      "chapter": "In this film",
+      "lines": [
+        "Here's which incentive applies, who receives the benefit, and what remains after location and execution costs."
+      ]
+    },
+    {
+      "id": "opportunity",
+      "chapter": "01 · The opportunity",
+      "lines": [
+        "In El Salvador, qualifying new investments in San Salvador's defined Historic Center may receive up to ten years of income-tax relief.",
+        "That's a specific regime for a specific area, separate from nationwide programs.",
+        "Not every business qualifies, so verify current rules before underwriting."
+      ]
+    },
+    {
+      "id": "checks",
+      "chapter": "02 · Three checks",
+      "lines": [
+        "Start with three checks.",
+        "First, exact location: inside the defined perimeter. One block outside can change the answer.",
+        "Second, a qualifying investment: an eligible activity, like food, lodging, or restoration, above the minimum.",
+        "Third, approval: the Historic Center's Planning Authority must qualify the project. No approval, no benefit."
+      ]
+    },
+    {
+      "id": "beneficiary",
+      "chapter": "03 · Who benefits",
+      "lines": [
+        "Then ask: which entity receives the benefit?",
+        "Owner, operator, and developer are often different companies.",
+        "A landlord's qualification doesn't automatically lower a tenant's taxes."
+      ]
+    },
+    {
+      "id": "economics",
+      "chapter": "04 · The arithmetic",
+      "lines": [
+        "Here's a simplified, hypothetical annual after-tax comparison.",
+        "Thirty thousand dollars of assumed tax savings, minus twenty-four thousand in additional after-tax occupancy costs, leaves six thousand a year.",
+        "It excludes other cost, timing, and risk differences. It's not a Salvadoran tax calculation, or a promised return."
+      ]
+    },
+    {
+      "id": "execution",
+      "chapter": "05 · Execution",
+      "lines": [
+        "Execution still matters: demand, permits, utilities, and opening delays can erase a thin advantage.",
+        "So underwrite the base case without incentives, then show the qualified benefit separately."
+      ]
+    },
+    {
+      "id": "close",
+      "chapter": "",
+      "lines": [
+        "Subscribe to Aurora for illustrated breakdowns of incentives, locations, and the real cost to open.",
+        "Next: who receives the benefit — the owner, operator, or developer?"
+      ]
+    }
+  ],
+  "pacing": {
+    "lead_in": 0.4,
+    "gap_within": 0.28,
+    "gap_between": 0.5,
+    "tail": 1.2
+  }
+}

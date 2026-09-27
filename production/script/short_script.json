@@ -1,0 +1,52 @@
+{
+  "id": "short",
+  "title": "Up to 10 years of tax relief? Not for every business.",
+  "voice": {
+    "model": "Kokoro-82M v0.19 int8 (sherpa-onnx)",
+    "speaker": "af_sarah",
+    "sid": 3,
+    "speed": 1.08
+  },
+  "scenes": [
+    {
+      "id": "s_hook",
+      "lines": [
+        "Up to ten years of tax relief?",
+        "For qualifying investments, potentially. For every business, no."
+      ]
+    },
+    {
+      "id": "s_zone",
+      "lines": [
+        "In El Salvador, this regime covers new investments in San Salvador's defined Historic Center."
+      ]
+    },
+    {
+      "id": "s_checks",
+      "lines": [
+        "Check three things.",
+        "Location: inside the defined perimeter.",
+        "Investment: an eligible activity, above the minimum.",
+        "Approval: qualified by the Planning Authority."
+      ]
+    },
+    {
+      "id": "s_benef",
+      "lines": [
+        "Then: who receives it? A landlord's approval doesn't automatically cut a tenant's taxes."
+      ]
+    },
+    {
+      "id": "s_close",
+      "lines": [
+        "Subscribe to Aurora for the next breakdown: who actually gets the benefit — owner, operator, or developer."
+      ]
+    }
+  ],
+  "pacing": {
+    "lead_in": 0.4,
+    "gap_within": 0.3,
+    "gap_between": 0.5,
+    "tail": 1.2
+  }
+}
