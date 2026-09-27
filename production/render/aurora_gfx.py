@@ -11,13 +11,15 @@ def hex_rgb(value):
     value = value.lstrip("#")
     return tuple(int(value[i:i + 2], 16) / 255 for i in (0, 2, 4))
 
-NAVY = hex_rgb("#1A2236")     # Aurora foundation
-CREAM = hex_rgb("#F5F1EA")    # Aurora foundation
-MINT = hex_rgb("#A6D8C0")
-SALMON = hex_rgb("#F5AAA0")
-YELLOW = hex_rgb("#F2CE62")
-BLUE = hex_rgb("#8DC9E4")
-PAPER = hex_rgb("#EAE3D6")    # one step darker than cream, for secondary surfaces (flat, no gradient)
+NAVY = hex_rgb("#1A2236")        # ink: text and outlines
+CREAM = hex_rgb("#F7F2E8")       # paper background
+# Illustration panels: saturated mid-tones from Salvadoran colonial facades. Validated as a set
+# (lightness band, chroma, CVD separation >= 10 dE) and each carries navy text at >= 4.7:1.
+TEAL = hex_rgb("#2E9E8A")
+TERRACOTTA = hex_rgb("#E5634F")
+OCHRE = hex_rgb("#E2A41C")
+COBALT = hex_rgb("#5E93E0")
+PAPER = hex_rgb("#ECE3D3")       # secondary surface one step darker than cream (flat, no gradient)
 
 FONT_HEAD = "AuroraFrauncesSemi"   # Fraunces 600, opsz 72, SOFT 0, WONK 0 (static instance)
 FONT_HEAD_REG = "AuroraFrauncesReg"  # Fraunces 400
@@ -424,11 +426,11 @@ def person(ctx, x, feet_y, h, shirt, walk=0.0, facing=1, arms="down", hardhat=Fa
     if prop == "folder":
         def folder(c):
             c.rectangle(0.1 * h, torso_top + 0.1 * h, 0.2 * h, 0.15 * h)
-        draw_shapes(ctx, [Shape(folder, fill=YELLOW)], 1, 1, line_width=LINE * 0.8)
+        draw_shapes(ctx, [Shape(folder, fill=OCHRE)], 1, 1, line_width=LINE * 0.8)
     elif prop == "tablet":
         def tablet(c):
             rounded_rect(c, 0.08 * h, torso_top + 0.08 * h, 0.16 * h, 0.2 * h, 0.02 * h)
-        draw_shapes(ctx, [Shape(tablet, fill=BLUE)], 1, 1, line_width=LINE * 0.8)
+        draw_shapes(ctx, [Shape(tablet, fill=COBALT)], 1, 1, line_width=LINE * 0.8)
 
     # head + hair cap
     def head(c):
@@ -438,7 +440,7 @@ def person(ctx, x, feet_y, h, shirt, walk=0.0, facing=1, arms="down", hardhat=Fa
     if hardhat:
         ctx.arc(0, head_y - r * 0.05, r * 1.08, math.pi, 2 * math.pi)
         ctx.rectangle(-r * 1.3, head_y - r * 0.12, r * 2.6, r * 0.22)
-        set_color(ctx, YELLOW)
+        set_color(ctx, OCHRE)
         ctx.fill_preserve()
         set_color(ctx, NAVY)
         ctx.set_line_width(LINE * 0.8)
@@ -455,7 +457,7 @@ def person(ctx, x, feet_y, h, shirt, walk=0.0, facing=1, arms="down", hardhat=Fa
 
 
 # ---------------------------------------------------------------- architecture
-def historic_facade(ctx, x, base_y, w, h, body=YELLOW, line_p=1.0, fill_p=1.0, window_fill=BLUE, shutters=0.0):
+def historic_facade(ctx, x, base_y, w, h, body=OCHRE, line_p=1.0, fill_p=1.0, window_fill=COBALT, shutters=0.0):
     """Colonial two-storey facade with ground-floor arcade: the Historic Center's building type."""
     top = base_y - h
     arcade_h = h * 0.42
@@ -492,7 +494,7 @@ def historic_facade(ctx, x, base_y, w, h, body=YELLOW, line_p=1.0, fill_p=1.0, w
         shapes.append(Shape(rail))
     draw_shapes(ctx, shapes, line_p, fill_p)
 
-def storefront(ctx, x, base_y, w, h, body=MINT, awning=SALMON, line_p=1.0, fill_p=1.0, sign=None):
+def storefront(ctx, x, base_y, w, h, body=TEAL, awning=TERRACOTTA, line_p=1.0, fill_p=1.0, sign=None):
     top = base_y - h
     shapes = [Shape(lambda c: c.rectangle(x, top, w, h), fill=body),
               Shape(lambda c: c.rectangle(x + w * 0.06, top + h * 0.08, w * 0.88, h * 0.16), fill=CREAM)]
@@ -507,13 +509,13 @@ def storefront(ctx, x, base_y, w, h, body=MINT, awning=SALMON, line_p=1.0, fill_
             c.arc(sx + sw / 2, top + h * 0.4, sw / 2, 0, math.pi)
             c.close_path()
         shapes.append(Shape(stripe, fill=awning if i % 2 == 0 else CREAM))
-    shapes.append(Shape(lambda c: c.rectangle(x + w * 0.08, top + h * 0.52, w * 0.5, h * 0.36), fill=BLUE))
+    shapes.append(Shape(lambda c: c.rectangle(x + w * 0.08, top + h * 0.52, w * 0.5, h * 0.36), fill=COBALT))
     shapes.append(Shape(lambda c: c.rectangle(x + w * 0.66, top + h * 0.5, w * 0.24, h * 0.5), fill=NAVY))
     draw_shapes(ctx, shapes, line_p, fill_p)
     if sign and fill_p > 0.5:
         text(ctx, sign, x + w / 2, top + h * 0.2, FONT_BODY_SEMI, h * 0.075, NAVY, "center", alpha=prog(fill_p, 0.5, 0.5), tracking=h * 0.01)
 
-def office_block(ctx, x, base_y, w, h, body=BLUE, line_p=1.0, fill_p=1.0):
+def office_block(ctx, x, base_y, w, h, body=COBALT, line_p=1.0, fill_p=1.0):
     top = base_y - h
     shapes = [Shape(lambda c: c.rectangle(x, top, w, h), fill=body)]
     cols, rows = 3, 5
@@ -538,7 +540,7 @@ def crane(ctx, x, base_y, h, line_p=1.0, hook_y=0.5, color=NAVY):
     stroke_polyline(ctx, partial_polyline([(x - h * 0.24, top), (x, top - h * 0.14), (x + h * 0.72, top)], p_ties), color, LINE * 0.7)
     if p_jib >= 1:
         ctx.rectangle(x - h * 0.23, top + h * 0.035, h * 0.09, h * 0.07)
-        set_color(ctx, SALMON)
+        set_color(ctx, TERRACOTTA)
         ctx.fill_preserve()
         set_color(ctx, NAVY)
         ctx.set_line_width(LINE * 0.8)
@@ -548,7 +550,7 @@ def crane(ctx, x, base_y, h, line_p=1.0, hook_y=0.5, color=NAVY):
         hy = top + h * 0.1 + h * 0.45 * hook_y
         stroke_polyline(ctx, [(hx, top + h * 0.035), (hx, hy)], color, LINE * 0.7)
         ctx.rectangle(hx - h * 0.06, hy, h * 0.12, h * 0.07)
-        set_color(ctx, YELLOW)
+        set_color(ctx, OCHRE)
         ctx.fill_preserve()
         set_color(ctx, NAVY)
         ctx.set_line_width(LINE * 0.8)
@@ -592,7 +594,7 @@ def document(ctx, x, y, w, h, fill=CREAM, lines=5, line_p=1.0, fill_p=1.0, rotat
     draw_shapes(ctx, shapes, line_p, fill_p)
     ctx.restore()
 
-def stamp(ctx, cx, cy, r, p, label="QUALIFIED", fill=MINT):
+def stamp(ctx, cx, cy, r, p, label="QUALIFIED", fill=TEAL):
     """Approval stamp that lands with a small overshoot."""
     if p <= 0:
         return
@@ -615,7 +617,7 @@ def stamp(ctx, cx, cy, r, p, label="QUALIFIED", fill=MINT):
     text(ctx, label, 0, r * 0.5, FONT_BODY_SEMI, r * 0.2, NAVY, "center", alpha=a, tracking=r * 0.02, label=None)
     ctx.restore()
 
-def calendar_icon(ctx, x, y, w, h, flip=0.0, fill=SALMON):
+def calendar_icon(ctx, x, y, w, h, flip=0.0, fill=TERRACOTTA):
     shapes = [Shape(lambda c: c.rectangle(x, y, w, h), fill=CREAM),
               Shape(lambda c: c.rectangle(x, y, w, h * 0.24), fill=fill)]
     for i in range(3):
@@ -639,13 +641,13 @@ def utility_pole(ctx, x, base_y, h, p=1.0, sway=0.0):
             stroke_polyline(ctx, partial_polyline(pts, clamp((p - 0.6) / 0.4)), NAVY, LINE * 0.6)
     for dx in (-0.18, 0.0, 0.18):
         ctx.arc(x + h * dx, base_y - h * 0.9, h * 0.022, 0, 2 * math.pi)
-        set_color(ctx, YELLOW)
+        set_color(ctx, OCHRE)
         ctx.fill_preserve()
         set_color(ctx, NAVY)
         ctx.set_line_width(LINE * 0.6)
         ctx.stroke()
 
-def aurora_mark(ctx, cx, base_y, r, color_fill=YELLOW, line_color=NAVY, p=1.0):
+def aurora_mark(ctx, cx, base_y, r, color_fill=OCHRE, line_color=NAVY, p=1.0):
     """Original wordmark glyph: a rising half-sun over a horizon line (aurora = dawn)."""
     ctx.new_path()
     ctx.arc(cx, base_y, r * ease_out(clamp(p)), math.pi, 2 * math.pi)
@@ -657,7 +659,7 @@ def aurora_mark(ctx, cx, base_y, r, color_fill=YELLOW, line_color=NAVY, p=1.0):
     ctx.stroke()
     stroke_polyline(ctx, [(cx - r * 1.35, base_y), (cx + r * 1.35, base_y)], line_color, max(2, r * 0.12))
 
-def wordmark(ctx, x, y, size, color=NAVY, fill=YELLOW, alpha=1.0, align="left"):
+def wordmark(ctx, x, y, size, color=NAVY, fill=OCHRE, alpha=1.0, align="left"):
     """'Aurora' text wordmark with the dawn glyph. y is the text baseline. Returns total width."""
     r = size * 0.36
     word_w = text_width(ctx, "Aurora", FONT_HEAD, size)
@@ -704,7 +706,7 @@ class CityPlan:
                 hit = not hit
         return hit
 
-    def draw(self, ctx, t_grid=1.0, t_perimeter=1.0, t_fill=1.0, inside_fill=MINT, highlight=None, dim_outside=False):
+    def draw(self, ctx, t_grid=1.0, t_perimeter=1.0, t_fill=1.0, inside_fill=TEAL, highlight=None, dim_outside=False):
         blocks = [(c, r) for r in range(self.rows) for c in range(self.cols)]
         for i, (c, r) in enumerate(blocks):
             bp = clamp(t_grid * 1.6 - i / len(blocks) * 0.6)

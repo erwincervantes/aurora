@@ -16,22 +16,22 @@ def draw(ctx):
     text(ctx, "of tax relief?", 60, 318, FONT_HEAD_REG, 100, NAVY)
     width = text_width(ctx, "Who qualifies?", FONT_HEAD, 58)
     ctx.rectangle(56, 372, width + 24, 76)
-    set_color(ctx, SALMON)
+    set_color(ctx, TERRACOTTA)
     ctx.fill()
     text(ctx, "Who qualifies?", 68, 428, FONT_HEAD, 58, NAVY)
     text(ctx, "Not every business does.", 64, 510, FONT_BODY_MED, 32, NAVY)
     wordmark(ctx, 64, 650, 40)
     # illustration panel
-    panel(ctx, 760, 40, 480, 640, YELLOW)
+    panel(ctx, 760, 40, 480, 640, OCHRE)
     ground_line(ctx, 760, 1240, 560)
-    historic_facade(ctx, 800, 560, 300, 260, CREAM, window_fill=BLUE)
-    person(ctx, 1170, 560, 150, MINT, apron=True, arms="present", facing=-1)
+    historic_facade(ctx, 800, 560, 300, 260, CREAM, window_fill=COBALT)
+    person(ctx, 1170, 560, 150, TEAL, apron=True, arms="present", facing=-1)
     # checklist card overlapping the panel edge
     kicker(ctx, "Year 1", 800, 102, size=16)
     kicker(ctx, "Year 10", 1200, 102, size=16, align="right")
     for year in range(10):
         ctx.rectangle(800 + year * 40, 116, 34, 44)
-        set_color(ctx, MINT)
+        set_color(ctx, TEAL)
         ctx.fill_preserve()
         set_color(ctx, NAVY)
         ctx.set_line_width(LINE * 0.8)
@@ -42,7 +42,7 @@ def draw(ctx):
     set_color(ctx, NAVY)
     ctx.set_line_width(LINE)
     ctx.stroke()
-    for k, (label, fill, mark) in enumerate((("Location", MINT, "check"), ("Investment", MINT, "check"), ("Approval", CREAM, "question"))):
+    for k, (label, fill, mark) in enumerate((("Location", TEAL, "check"), ("Investment", TEAL, "check"), ("Approval", CREAM, "question"))):
         cx = (728, 898, 1082)[k]
         badge(ctx, cx, 625, 18, fill, 1, mark)
         text(ctx, label, cx + 26, 633, FONT_BODY_SEMI, 21, NAVY)

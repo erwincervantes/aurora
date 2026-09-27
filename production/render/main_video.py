@@ -73,17 +73,17 @@ class MainFilm(vc.Film):
     def scene_hook(self, ctx, t):
         c0, c1 = self.at("hook", 0), self.at("hook", 1)
         px, py, pw, ph = 980, 160, 820, 720
-        panel(ctx, px, py, pw, ph, MINT, prog(t, 0.0, 0.75), "up")
+        panel(ctx, px, py, pw, ph, TEAL, prog(t, 0.0, 0.75), "up")
         ground = 800
         ctx.save()
         ctx.rectangle(px, py, pw, ph)
         ctx.clip()
         ground_line(ctx, px, px + pw, ground, prog(t, 0.3, 0.8))
         weak = prog(t, phrase_time(self.line("hook", 1), "weak location"), 1.2)
-        historic_facade(ctx, 1120, ground, 540, 460, YELLOW, line_p=prog(t, 0.35, 1.7), fill_p=prog(t, 1.35, 0.6),
+        historic_facade(ctx, 1120, ground, 540, 460, OCHRE, line_p=prog(t, 0.35, 1.7), fill_p=prog(t, 1.35, 0.6),
                         shutters=weak * 1.1)
         # foot traffic: two passers-by early; at "weak location" the street empties
-        for k, (start_x, speed, shirt, h) in enumerate(((1010, 150, SALMON, 170), (1780, -120, BLUE, 158))):
+        for k, (start_x, speed, shirt, h) in enumerate(((1010, 150, TERRACOTTA, 170), (1780, -120, COBALT, 158))):
             walk_t = t - 0.9 - k * 0.3
             if walk_t > 0:
                 x = start_x + speed * walk_t
@@ -102,7 +102,7 @@ class MainFilm(vc.Film):
             ctx.rotate(swing)
             drop = lerp(-260, 0, ease_back(tag_p, 1.1))
             stroke_polyline(ctx, [(0, 0), (0, 64 + drop)], NAVY, 2)
-            chip(ctx, "Tax incentive", 0, 64 + drop, YELLOW, size=26, align="center")
+            chip(ctx, "Tax incentive", 0, 64 + drop, OCHRE, size=26, align="center")
             ctx.restore()
         a, dy = rise(ctx, t, c0)
         bottom = text_block(ctx, "A tax incentive can improve your return.", LEFT, 380 + dy, FONT_HEAD, 70, NAVY, 740,
@@ -115,7 +115,7 @@ class MainFilm(vc.Film):
         w_weak = text_width(ctx, "weak location?", FONT_HEAD_REG, 70)
         if hl > 0:
             ctx.rectangle(LEFT - 6, y3 - 50, (w_weak + 12) * hl, 66)
-            set_color(ctx, SALMON)
+            set_color(ctx, TERRACOTTA)
             ctx.fill()
         text(ctx, "weak location?", LEFT, y3, FONT_HEAD_REG, 70, NAVY, alpha=a2)
 
@@ -128,9 +128,9 @@ class MainFilm(vc.Film):
         text(ctx, "El Salvador Tax Incentives", LEFT, 318 + dy, FONT_HEAD, 80, NAVY, alpha=a)
         a2, dy2 = rise(ctx, t, s + 0.6)
         text(ctx, "Who qualifies for up to 10 years of relief?", LEFT, 394 + dy2, FONT_HEAD_REG, 50, NAVY, alpha=a2)
-        items = [("which incentive applies", MINT, "Which incentive applies"),
-                 ("who receives the benefit", SALMON, "Who receives the benefit"),
-                 ("what remains", BLUE, "What remains after location and execution costs")]
+        items = [("which incentive applies", TEAL, "Which incentive applies"),
+                 ("who receives the benefit", TERRACOTTA, "Who receives the benefit"),
+                 ("what remains", COBALT, "What remains after location and execution costs")]
         for i, (phrase, color, label) in enumerate(items):
             start = phrase_time(line, phrase) - 0.15
             x, y, w, h = LEFT + i * 560, 470, 520, 400
@@ -149,13 +149,13 @@ class MainFilm(vc.Film):
                 stamp(ctx, x + 330, y + 215, 52, prog(t, start + 1.0, 0.7))
             elif i == 1:
                 ground_line(ctx, x + 60, x + w - 60, y + 272, ip)
-                for k, (shirt, kw) in enumerate(((YELLOW, {"prop": "folder", "arms": "hold"}), (MINT, {"apron": True}),
-                                                 (BLUE, {"hardhat": True, "arms": "point", "facing": -1}))):
+                for k, (shirt, kw) in enumerate(((OCHRE, {"prop": "folder", "arms": "hold"}), (TEAL, {"apron": True}),
+                                                 (COBALT, {"hardhat": True, "arms": "point", "facing": -1}))):
                     fa = ease_out(prog(t, start + 0.3 + k * 0.2, 0.5))
                     person(ctx, x + 150 + k * 110, y + 272, 170, shirt, alpha=fa, **kw)
             else:
                 base = y + 270
-                bars = [(x + 120, 190, MINT), (x + 230, 150, SALMON), (x + 340, 40, YELLOW)]
+                bars = [(x + 120, 190, TEAL), (x + 230, 150, TERRACOTTA), (x + 340, 40, OCHRE)]
                 ground_line(ctx, x + 90, x + 440, base, ip)
                 for k, (bx, bh, bc) in enumerate(bars):
                     bp = ease_out(prog(t, start + 0.3 + k * 0.25, 0.6))
@@ -193,7 +193,7 @@ class MainFilm(vc.Film):
                 continue
             x = LEFT + year * 64
             ctx.rectangle(x, 606, 58, 44 * yp)
-            set_color(ctx, YELLOW)
+            set_color(ctx, OCHRE)
             ctx.fill_preserve()
             set_color(ctx, NAVY)
             ctx.set_line_width(LINE * 0.8)
@@ -203,7 +203,7 @@ class MainFilm(vc.Film):
         text(ctx, "Year 10", LEFT + 9 * 64 + 58, 686, FONT_BODY_MED, 20, NAVY, "right", alpha=la)
         # not every business qualifies
         np_ = prog(t, l2["start"], 0.6)
-        panel(ctx, LEFT, 730, 640, 132, SALMON, np_, "right")
+        panel(ctx, LEFT, 730, 640, 132, TERRACOTTA, np_, "right")
         if np_ > 0:
             na = ease_out(prog(t, l2["start"] + 0.3, 0.5))
             text(ctx, "Not every business qualifies.", LEFT + 28, 784, FONT_HEAD, 36, NAVY, alpha=na)
@@ -211,7 +211,7 @@ class MainFilm(vc.Film):
                  alpha=ease_out(prog(t, phrase_time(l2, "verify"), 0.5)))
         # right: the plan and its defined perimeter
         px, py, pw, ph = 880, 160, 920, 730
-        panel(ctx, px, py, pw, ph, BLUE, prog(t, s + 0.1, 0.7), "up")
+        panel(ctx, px, py, pw, ph, COBALT, prog(t, s + 0.1, 0.7), "up")
         plan = CityPlan(915, 190, 850, 490)
         plan.draw(ctx, t_grid=prog(t, l0["start"] + 0.2, 1.4), t_perimeter=prog(t, phrase_time(l0, "defined Historic"), 1.6),
                   t_fill=prog(t, phrase_time(l0, "may receive"), 1.4))
@@ -239,8 +239,8 @@ class MainFilm(vc.Film):
                 ka = ease_out(prog(t, phrase_time(l1, "nationwide") + k * 0.2, 0.4))
                 cx += chip(ctx, label, cx, 808, PAPER, size=22, alpha=ka) + 12
         # which businesses inside the zone qualify?
-        for k, ((c, r), fill, mark) in enumerate((((2, 1), MINT, "check"), ((4, 3), MINT, "check"),
-                                                 ((5, 2), SALMON, "cross"), ((1, 2), YELLOW, "question"))):
+        for k, ((c, r), fill, mark) in enumerate((((2, 1), TEAL, "check"), ((4, 3), TEAL, "check"),
+                                                 ((5, 2), TERRACOTTA, "cross"), ((1, 2), OCHRE, "question"))):
             bp = prog(t, l2["start"] + 0.2 + k * 0.35, 0.9)
             if bp > 0:
                 cx, cy = plan.block_center(c, r)
@@ -252,9 +252,9 @@ class MainFilm(vc.Film):
         lines = [self.line("checks", i) for i in range(4)]
         a, dy = rise(ctx, t, lines[0]["start"])
         text(ctx, "Three checks", LEFT, 250 + dy, FONT_HEAD, 62, NAVY, alpha=a)
-        rows = [("Exact location", "Inside the defined perimeter", BLUE),
-                ("Qualifying investment", "Eligible activity, above the minimum", YELLOW),
-                ("Approval", "Qualified by the Planning Authority", MINT)]
+        rows = [("Exact location", "Inside the defined perimeter", COBALT),
+                ("Qualifying investment", "Eligible activity, above the minimum", OCHRE),
+                ("Approval", "Qualified by the Planning Authority", TEAL)]
         for i, (title, sub, color) in enumerate(rows):
             y = 320 + i * 180
             appear = ease_out(prog(t, lines[0]["start"] + 0.2 + i * 0.2, 0.5))
@@ -292,7 +292,7 @@ class MainFilm(vc.Film):
         # right panel: one illustration per check, each wiping over the last
         px, py, pw, ph = 880, 160, 920, 730
         starts = [s + 0.1] + [lines[i]["start"] for i in (2, 3)]
-        colors = [BLUE, YELLOW, MINT]
+        colors = [COBALT, OCHRE, TEAL]
         for k in range(3):
             p = prog(t, starts[k], 0.6)
             if p <= 0:
@@ -324,30 +324,30 @@ class MainFilm(vc.Film):
         inside_p = prog(t, phrase_time(l1, "inside the defined"), 0.7)
         outside_p = prog(t, phrase_time(l1, "One block outside"), 0.7)
         plan.draw(ctx, t_grid=prog(t, lines[0]["start"], 1.0), t_perimeter=prog(t, lines[0]["start"] + 0.5, 1.4),
-                  t_fill=0, highlight={(1, 1): (MINT, inside_p), (2, 1): (SALMON, outside_p)})
-        for (c, r), p, fill, mark in (((1, 1), inside_p, MINT, "check"), ((2, 1), outside_p, SALMON, "cross")):
+                  t_fill=0, highlight={(1, 1): (TEAL, inside_p), (2, 1): (TERRACOTTA, outside_p)})
+        for (c, r), p, fill, mark in (((1, 1), inside_p, TEAL, "check"), ((2, 1), outside_p, TERRACOTTA, "cross")):
             if p > 0:
                 cx, cy = plan.block_center(c, r)
                 badge(ctx, cx, cy, 34, CREAM, prog(t, (phrase_time(l1, "inside the defined") if mark == "check" else phrase_time(l1, "One block outside")) + 0.3, 0.9), mark)
         la = ease_out(prog(t, phrase_time(l1, "inside the defined"), 0.5))
         if la > 0:
-            chip(ctx, "Inside the perimeter", 920, 790, MINT, size=24, alpha=la)
+            chip(ctx, "Inside the perimeter", 920, 790, TEAL, size=24, alpha=la)
         lb = ease_out(prog(t, phrase_time(l1, "One block outside"), 0.5))
         if lb > 0:
-            chip(ctx, "One block outside", 1210, 790, SALMON, size=24, alpha=lb)
+            chip(ctx, "One block outside", 1210, 790, TERRACOTTA, size=24, alpha=lb)
 
     def _check_investment(self, ctx, t, lines):
         l2 = lines[2]
         start = l2["start"]
         ground_line(ctx, 900, 1780, 600, prog(t, start, 0.6))
         historic_facade(ctx, 960, 600, 330, 300, CREAM, line_p=prog(t, start + 0.1, 1.2), fill_p=prog(t, start + 0.8, 0.5),
-                        window_fill=BLUE)
+                        window_fill=COBALT)
         scaffold(ctx, 940, 600, 370, 300, prog(t, start + 0.8, 1.4))
         crane(ctx, 1450, 600, 330, prog(t, start + 0.4, 1.6), hook_y=0.5 + 0.12 * math.sin(t * 1.6))
-        person(ctx, 1360, 600, 150, BLUE, hardhat=True, arms="point", facing=1,
+        person(ctx, 1360, 600, 150, COBALT, hardhat=True, arms="point", facing=1,
                alpha=ease_out(prog(t, start + 1.2, 0.5)))
-        chips = [("Food", "food", MINT), ("Lodging", "lodging", SALMON), ("Culture", "lodging", BLUE),
-                 ("Housing", "lodging", CREAM), ("Restoration", "restoration", MINT)]
+        chips = [("Food", "food", TEAL), ("Lodging", "lodging", TERRACOTTA), ("Culture", "lodging", COBALT),
+                 ("Housing", "lodging", CREAM), ("Restoration", "restoration", TEAL)]
         cx = 920
         for k, (label, cue, fill) in enumerate(chips):
             ca = ease_out(prog(t, phrase_time(l2, cue) + (0.2 * (k - 1) if cue == "lodging" else 0), 0.45))
@@ -363,7 +363,7 @@ class MainFilm(vc.Film):
             fill = ease_out(prog(t, th - 0.6, 1.4)) * 0.8
             if fill > 0:
                 rounded_rect(ctx, 920, 756, 840 * fill, 40, 20)
-                set_color(ctx, BLUE)
+                set_color(ctx, COBALT)
                 ctx.fill()
             rounded_rect(ctx, 920, 756, 840, 40, 20)
             set_color(ctx, NAVY, ta)
@@ -373,7 +373,7 @@ class MainFilm(vc.Film):
             stroke_polyline(ctx, [(mx, 742), (mx, 810)], NAVY, LINE * 1.2, alpha=ta)
             text(ctx, "Minimum", mx + 10, 830, FONT_BODY_MED, 20, NAVY, alpha=ta)
             if fill >= 0.6:
-                badge(ctx, 920 + 840 * fill + 26, 776, 20, MINT, prog(t, th + 0.3, 0.8), "check")
+                badge(ctx, 920 + 840 * fill + 26, 776, 20, TEAL, prog(t, th + 0.3, 0.8), "check")
 
     def _check_approval(self, ctx, t, lines):
         l3 = lines[3]
@@ -388,9 +388,9 @@ class MainFilm(vc.Film):
         text(ctx, "APLAN · Ventanilla Única", 1340, 238, FONT_BODY_SEMI, 26, NAVY, "center", alpha=sa)
         stroke_polyline(ctx, [(1180, 196), (1180, 170)], NAVY, 2, alpha=sa)
         stroke_polyline(ctx, [(1500, 196), (1500, 170)], NAVY, 2, alpha=sa)
-        person(ctx, 1680, 700, 250, BLUE, arms="hold", facing=-1, alpha=ease_out(prog(t, start + 0.3, 0.5)))
+        person(ctx, 1680, 700, 250, COBALT, arms="hold", facing=-1, alpha=ease_out(prog(t, start + 0.3, 0.5)))
         walk_in = ease_out(prog(t, start + 0.1, 1.4))
-        person(ctx, lerp(900, 1090, walk_in), 760, 290, SALMON, walk=(t - start) * 7 * (1 - walk_in), arms="hold",
+        person(ctx, lerp(900, 1090, walk_in), 760, 290, TERRACOTTA, walk=(t - start) * 7 * (1 - walk_in), arms="hold",
                prop="folder", facing=1)
         ctx.rectangle(1240, 560, 540, 200)
         set_color(ctx, PAPER)
@@ -418,11 +418,11 @@ class MainFilm(vc.Film):
             ctx.save()
             ctx.translate(W / 2, 312)
             ctx.scale(ta, ta)
-            chip(ctx, "Qualified benefit", 0, -24, YELLOW, size=26, align="center")
+            chip(ctx, "Qualified benefit", 0, -24, OCHRE, size=26, align="center")
             ctx.restore()
-        cards = [("Owner · landlord", "Holds the property", YELLOW, "owner"),
-                 ("Operator · tenant", "Runs the business", MINT, "operator"),
-                 ("Developer", "Builds the project", BLUE, "developer")]
+        cards = [("Owner · landlord", "Holds the property", OCHRE, "owner"),
+                 ("Operator · tenant", "Runs the business", TEAL, "operator"),
+                 ("Developer", "Builds the project", COBALT, "developer")]
         resolve = l2["start"]
         for i, (title, sub, color, key) in enumerate(cards):
             start = phrase_time(l1, key.capitalize() if key == "owner" else key)
@@ -443,38 +443,38 @@ class MainFilm(vc.Film):
             ground_line(ctx, x + 30, x + w - 30, y + 250, ip)
             if key == "owner":
                 historic_facade(ctx, x + 70, y + 250, 200, 170, CREAM, ip, prog(t, start + 0.8, 0.4))
-                person(ctx, x + 340, y + 250, 150, YELLOW, arms="hold", prop="folder", facing=-1, alpha=ease_out(prog(t, start + 0.6, 0.5)))
+                person(ctx, x + 340, y + 250, 150, OCHRE, arms="hold", prop="folder", facing=-1, alpha=ease_out(prog(t, start + 0.6, 0.5)))
             elif key == "operator":
-                storefront(ctx, x + 60, y + 250, 210, 190, CREAM, SALMON, ip, prog(t, start + 0.8, 0.4))
-                person(ctx, x + 350, y + 250, 150, MINT, apron=True, arms="present", facing=-1, alpha=ease_out(prog(t, start + 0.6, 0.5)))
+                storefront(ctx, x + 60, y + 250, 210, 190, CREAM, TERRACOTTA, ip, prog(t, start + 0.8, 0.4))
+                person(ctx, x + 350, y + 250, 150, TEAL, apron=True, arms="present", facing=-1, alpha=ease_out(prog(t, start + 0.6, 0.5)))
             else:
                 crane(ctx, x + 100, y + 250, 200, ip, hook_y=0.5 + 0.15 * math.sin(t * 1.7))
-                person(ctx, x + 350, y + 250, 150, YELLOW, hardhat=True, arms="point", facing=-1, alpha=ease_out(prog(t, start + 0.6, 0.5)))
+                person(ctx, x + 350, y + 250, 150, OCHRE, hardhat=True, arms="point", facing=-1, alpha=ease_out(prog(t, start + 0.6, 0.5)))
             ctx.restore()
             text(ctx, title, x + 28, y + 318, FONT_HEAD, 36, NAVY, alpha=ease_out(prog(t, start + 0.3, 0.5)))
             text(ctx, sub, x + 28, y + 358, FONT_BODY, 24, NAVY, alpha=ease_out(prog(t, start + 0.4, 0.5)))
             mark = "question"
             fill = CREAM
             if t > resolve + 0.4 and key == "owner":
-                mark, fill = "check", MINT
+                mark, fill = "check", TEAL
             elif t > resolve + 0.9 and key == "operator":
-                mark, fill = "cross", SALMON
+                mark, fill = "cross", TERRACOTTA
             bstart = start + 0.2 if mark == "question" else resolve + (0.4 if key == "owner" else 0.9)
             badge(ctx, cx, 404, 22, fill, prog(t, bstart, 0.8), mark)
         na = ease_out(prog(t, phrase_time(l2, "automatically"), 0.5))
         if na > 0:
-            chip(ctx, "Landlord qualified ≠ tenant benefits automatically", W / 2, 846, SALMON, size=24, alpha=na, align="center")
+            chip(ctx, "Landlord qualified ≠ tenant benefits automatically", W / 2, 846, TERRACOTTA, size=24, alpha=na, align="center")
 
     # ------------------------------------------------------------ 6. economics
     def scene_economics(self, ctx, t):
         l0, l1, l2 = (self.line("economics", i) for i in range(3))
         a, dy = rise(ctx, t, l0["start"])
-        chip(ctx, "Simplified hypothetical", LEFT, 176 + dy, SALMON, size=22, alpha=a)
+        chip(ctx, "Simplified hypothetical", LEFT, 176 + dy, TERRACOTTA, size=22, alpha=a)
         text_block(ctx, "Annual after-tax comparison", LEFT, 300, FONT_HEAD, 58, NAVY, 700, leading=1.1,
                    p=prog(t, l0["start"] + 0.2, 1.0))
         t_save, t_minus, t_leaves = (phrase_time(l1, p) for p in ("Thirty", "minus", "leaves"))
-        rows = [(t_save, "Assumed tax savings", ASSUMED_ANNUAL_TAX_SAVINGS, "", MINT),
-                (t_minus, "Additional after-tax occupancy costs", ADDITIONAL_AFTER_TAX_OCCUPANCY_COST, "−", SALMON)]
+        rows = [(t_save, "Assumed tax savings", ASSUMED_ANNUAL_TAX_SAVINGS, "", TEAL),
+                (t_minus, "Additional after-tax occupancy costs", ADDITIONAL_AFTER_TAX_OCCUPANCY_COST, "−", TERRACOTTA)]
         for k, (start, label, value, sign, color) in enumerate(rows):
             y = 480 + k * 96
             ra, rdy = rise(ctx, t, start)
@@ -492,7 +492,7 @@ class MainFilm(vc.Film):
         if ra > 0:
             vw = text_width(ctx, f"= {usd(REMAINING_ANNUAL_ADVANTAGE)}", FONT_HEAD, 54)
             ctx.rectangle(820 - vw - 14, 668 + rdy, vw + 28, 72)
-            set_color(ctx, YELLOW, ra)
+            set_color(ctx, OCHRE, ra)
             ctx.fill()
             text(ctx, "Remaining annual advantage", LEFT + 32, 716 + rdy, FONT_BODY_SEMI, 27, NAVY, alpha=ra)
             shown = REMAINING_ANNUAL_ADVANTAGE * ease_out(prog(t, t_leaves, 0.9))
@@ -505,9 +505,9 @@ class MainFilm(vc.Film):
             gy = base - g * scale
             stroke_polyline(ctx, partial_polyline([(1000, gy), (1790, gy)], ca), NAVY, 1.2 if g else LINE, alpha=0.3 if g else 1)
             text(ctx, f"${g // 1000}k" if g else "$0", 990, gy + 7, FONT_BODY_MED, 20, NAVY, "right", alpha=ca)
-        bars = [(1050, t_save, 0, ASSUMED_ANNUAL_TAX_SAVINGS, MINT, "Assumed tax savings"),
-                (1310, t_minus, REMAINING_ANNUAL_ADVANTAGE, ASSUMED_ANNUAL_TAX_SAVINGS, SALMON, "Added occupancy cost, after tax"),
-                (1570, t_leaves, 0, REMAINING_ANNUAL_ADVANTAGE, YELLOW, "Remaining advantage")]
+        bars = [(1050, t_save, 0, ASSUMED_ANNUAL_TAX_SAVINGS, TEAL, "Assumed tax savings"),
+                (1310, t_minus, REMAINING_ANNUAL_ADVANTAGE, ASSUMED_ANNUAL_TAX_SAVINGS, TERRACOTTA, "Added occupancy cost, after tax"),
+                (1570, t_leaves, 0, REMAINING_ANNUAL_ADVANTAGE, OCHRE, "Remaining advantage")]
         for k, (bx, start, low, high, color, label) in enumerate(bars):
             bp = ease_out(prog(t, start, 1.0))
             if bp <= 0:
@@ -569,8 +569,8 @@ class MainFilm(vc.Film):
     def _execution_risks(self, ctx, t, l0):
         a, dy = rise(ctx, t, l0["start"])
         text(ctx, "Execution still decides the outcome", LEFT, 250 + dy, FONT_HEAD, 58, NAVY, alpha=a)
-        tiles = [("Demand", "demand", MINT), ("Permits", "permits", YELLOW), ("Utilities", "utilities", BLUE),
-                 ("Opening delays", "opening delays", SALMON)]
+        tiles = [("Demand", "demand", TEAL), ("Permits", "permits", OCHRE), ("Utilities", "utilities", COBALT),
+                 ("Opening delays", "opening delays", TERRACOTTA)]
         for i, (label, cue, color) in enumerate(tiles):
             start = phrase_time(l0, cue) - 0.1
             x, y, w, h = LEFT + i * 420, 310, 380, 370
@@ -584,10 +584,10 @@ class MainFilm(vc.Film):
             ctx.clip()
             ground_line(ctx, x + 20, x + w - 20, y + 270, ip)
             if i == 0:
-                storefront(ctx, x + 40, y + 270, 170, 170, CREAM, SALMON, ip, prog(t, start + 0.5, 0.4))
+                storefront(ctx, x + 40, y + 270, 170, 170, CREAM, TERRACOTTA, ip, prog(t, start + 0.5, 0.4))
                 for k in range(2):
                     wx = x + 380 - ((t - start) * 60 + k * 90) % 200
-                    person(ctx, wx, y + 270, 120, (YELLOW, BLUE)[k], walk=(t - start) * 7 + k, facing=-1,
+                    person(ctx, wx, y + 270, 120, (OCHRE, COBALT)[k], walk=(t - start) * 7 + k, facing=-1,
                            alpha=ease_out(prog(t, start + 0.4, 0.4)))
             elif i == 1:
                 for k in range(3):
@@ -607,7 +607,7 @@ class MainFilm(vc.Film):
             full = 700
             remaining = lerp(full, 150, ease_in_out(prog(t, erase, 1.6)))
             ctx.rectangle(LEFT, 756, remaining, 44)
-            set_color(ctx, YELLOW, ea)
+            set_color(ctx, OCHRE, ea)
             ctx.fill_preserve()
             set_color(ctx, NAVY, ea)
             ctx.set_line_width(LINE)
@@ -624,7 +624,7 @@ class MainFilm(vc.Film):
         a, dy = rise(ctx, t, l1["start"] + 0.2)
         text(ctx, "Underwrite in two layers", LEFT, 250 + dy, FONT_HEAD, 58, NAVY, alpha=a)
         columns = [(LEFT, "1 · Base case", "No incentives assumed. It must work on its own.", CREAM, l1["start"] + 0.3, False),
-                   (1000, "2 · Qualified benefit", "Shown separately, only if approved.", YELLOW,
+                   (1000, "2 · Qualified benefit", "Shown separately, only if approved.", OCHRE,
                     phrase_time(l1, "show the qualified"), True)]
         for x, title, sub, fill, start, dashed in columns:
             p = prog(t, start, 0.6)
@@ -643,7 +643,7 @@ class MainFilm(vc.Film):
                     continue
                 bx = x + 70 + k * 136
                 ctx.rectangle(bx, base - bh * bp, 96, bh * bp)
-                set_color(ctx, fill if not dashed else YELLOW)
+                set_color(ctx, fill if not dashed else OCHRE)
                 ctx.fill_preserve()
                 set_color(ctx, NAVY)
                 ctx.set_line_width(LINE)
@@ -653,7 +653,7 @@ class MainFilm(vc.Film):
                 ctx.set_dash([])
                 text(ctx, f"Yr {k + 1}", bx + 48, base + 30, FONT_BODY_MED, 20, NAVY, "center", alpha=bp)
             if dashed:
-                chip(ctx, "Subject to approval", x + 36, 450, SALMON, size=22, alpha=ca)
+                chip(ctx, "Subject to approval", x + 36, 450, TERRACOTTA, size=22, alpha=ca)
                 stamp(ctx, x + 620, 560, 60, prog(t, start + 1.2, 0.8))
 
     # ------------------------------------------------------------ 8. close
@@ -663,7 +663,7 @@ class MainFilm(vc.Film):
         a = ease_out(prog(t, s + 0.3, 0.7))
         ctx.save()
         ctx.translate(0, (1 - a) * 20)
-        wordmark(ctx, W / 2, 300, 120, color=CREAM, fill=YELLOW, alpha=a, align="center")
+        wordmark(ctx, W / 2, 300, 120, color=CREAM, fill=OCHRE, alpha=a, align="center")
         ctx.restore()
         kicker(ctx, "Latin America Expansion", W / 2, 362, alpha=a, color=CREAM, size=24, align="center")
         ba, bdy = rise(ctx, t, phrase_time(l0, "illustrated"))
@@ -675,7 +675,7 @@ class MainFilm(vc.Film):
             ctx.translate(W / 2, 530)
             ctx.scale(sp, sp)
             rounded_rect(ctx, -170, -40, 340, 80, 40)
-            set_color(ctx, YELLOW)
+            set_color(ctx, OCHRE)
             ctx.fill_preserve()
             set_color(ctx, CREAM)
             ctx.set_line_width(LINE)
@@ -691,8 +691,8 @@ class MainFilm(vc.Film):
             kicker(ctx, "Next episode", 420, 726, alpha=na, size=20)
             text_block(ctx, "Who receives the benefit: the owner, operator, or developer?", 420, 780, FONT_HEAD, 38,
                        NAVY, 700, leading=1.15, alpha=na)
-            for k, (shirt, kw) in enumerate(((YELLOW, {"prop": "folder", "arms": "hold"}), (MINT, {"apron": True}),
-                                             (BLUE, {"hardhat": True, "arms": "point", "facing": -1}))):
+            for k, (shirt, kw) in enumerate(((OCHRE, {"prop": "folder", "arms": "hold"}), (TEAL, {"apron": True}),
+                                             (COBALT, {"hardhat": True, "arms": "point", "facing": -1}))):
                 fa = ease_out(prog(t, phrase_time(l1, ("owner", "operator", "developer")[k]), 0.5))
                 person(ctx, 1230 + k * 100, 858, 150, shirt, alpha=fa, **kw)
 

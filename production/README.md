@@ -43,7 +43,7 @@ A full 16:9 render takes about 3 minutes on 4 CPU cores.
 ## Key settings
 
 - **Hypothetical economics** are named constants at the top of `main_video.py`: `ASSUMED_ANNUAL_TAX_SAVINGS`, `ADDITIONAL_AFTER_TAX_OCCUPANCY_COST` and the derived `REMAINING_ANNUAL_ADVANTAGE`. Chart heights, count-ups and labels all derive from them. An `assert` stops the render if the result stops matching the narrated $6,000.
-- **Brand palette and type** live at the top of `aurora_gfx.py`: navy #1A2236, cream #F5F1EA, mint #A6D8C0, salmon #F5AAA0, yellow #F2CE62, blue #8DC9E4. Headings use Fraunces 600/400 (opsz 72, SOFT 0, WONK 0); supporting text uses Geist 400/500/600.
+- **Brand palette and type** live at the top of `aurora_gfx.py`: navy #1A2236 (ink) on cream #F7F2E8, with illustration panels in teal #2E9E8A, terracotta #E5634F, ochre #E2A41C and cobalt #5E93E0. The panels are validated as a set (lightness band, chroma floor, colour-blind separation ≥ 10 ΔE), and navy text holds ≥ 4.7:1 contrast on each. Headings use Fraunces 600/400; supporting text uses Geist 400/500/600.
 - **Pacing** is set per script in `pacing` (lead-in and gaps) and `voice.speed`.
 - **Loudness targets** are `TARGET_LUFS = -14`, `TARGET_TRUE_PEAK = -1.5` in `video_core.py`.
 

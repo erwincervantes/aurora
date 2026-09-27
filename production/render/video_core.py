@@ -8,7 +8,7 @@ from pathlib import Path
 
 import cairo
 
-from aurora_gfx import (CREAM, NAVY, MINT, YELLOW, BLUE, SALMON, FONT_BODY_MED, QC, clamp, ease_in_out,
+from aurora_gfx import (CREAM, NAVY, TEAL, OCHRE, COBALT, TERRACOTTA, FONT_BODY_MED, QC, clamp, ease_in_out,
                         rounded_rect, set_color, text, text_width, stroke_polyline)
 
 FPS = 30
@@ -118,7 +118,7 @@ def draw_caption(ctx, captions, t, center_x, bottom_y, size, max_box_width):
 
 # ---------------------------------------------------------------- transitions
 TRANSITION_HALF = 0.34
-TRANSITION_SETS = [(MINT, YELLOW, BLUE), (SALMON, MINT, YELLOW), (BLUE, SALMON, MINT), (YELLOW, BLUE, SALMON)]
+TRANSITION_SETS = [(TEAL, OCHRE, COBALT), (TERRACOTTA, TEAL, OCHRE), (COBALT, TERRACOTTA, TEAL), (OCHRE, COBALT, TERRACOTTA)]
 
 def draw_transition(ctx, t, boundaries, width, height):
     """Three colored bands sweep across and hand over to the next scene at full cover."""
