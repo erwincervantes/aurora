@@ -47,7 +47,7 @@ def silences(path, min_len=1.0):
 def contact_sheet(path, out, width, height, every=3.0, duration=100.0, cols=6):
     thumb_w = 320 if width > height else 180
     thumb_h = int(thumb_w * height / width)
-    times = [t for t in [x * every + 0.5 for x in range(int(duration / every) + 1)] if t < duration]
+    times = [t for t in [x * every + 0.5 for x in range(int(duration / every) + 1)] if t < duration - 0.4]
     frames = []
     for t in times:
         raw = subprocess.run(["ffmpeg", "-v", "error", "-ss", f"{t}", "-i", str(path), "-frames:v", "1",
