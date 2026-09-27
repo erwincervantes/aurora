@@ -5,48 +5,46 @@
     "model": "Kokoro-82M v0.19 int8 (sherpa-onnx)",
     "speaker": "af_sarah",
     "sid": 3,
-    "speed": 1.08
+    "speed": 1.0
   },
   "scenes": [
     {
       "id": "s_hook",
       "lines": [
-        "Up to ten years of tax relief?",
-        "For qualifying investments, potentially. For every business, no."
+        "A ten-year tax break sounds compelling.",
+        "But does your project qualify?"
       ]
     },
     {
       "id": "s_zone",
       "lines": [
-        "It applies only to new investments in San Salvador's defined Historic Center."
+        "In San Salvador's Historic Center, qualifying new investments may receive up to ten years of tax relief."
       ]
     },
     {
       "id": "s_checks",
       "lines": [
-        "Check three things.",
-        "Location: inside the perimeter.",
-        "Investment: an eligible activity, above the minimum.",
-        "Approval: qualified by the Planning Authority."
+        "Before counting the savings, check three things: the exact location, the qualifying investment, and the required approval."
       ]
     },
     {
       "id": "s_benef",
       "lines": [
-        "Then ask who receives it. A landlord's approval doesn't automatically cut a tenant's taxes."
+        "Then ask the question that matters: who actually receives the benefit?",
+        "A landlord's approval does not automatically extend to the tenant."
       ]
     },
     {
       "id": "s_close",
       "lines": [
-        "Weighing a site there? Request an engagement at conaurora.com, or subscribe for the next breakdown."
+        "Follow Aurora for the economics behind expansion — not just the headline incentives."
       ]
     }
   ],
   "pacing": {
     "lead_in": 0.4,
     "gap_within": 0.3,
-    "gap_between": 0.5,
-    "tail": 1.2
+    "gap_between": 0.55,
+    "tail": 1.6
   }
 }

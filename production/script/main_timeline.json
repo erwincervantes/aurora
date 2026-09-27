@@ -28,157 +28,157 @@
         {
           "text": "Here's who qualifies, who actually benefits, and what's left after location and execution costs.",
           "start": 6.009,
-          "end": 10.93
+          "end": 10.933
         }
       ],
-      "end": 11.18
+      "end": 11.183
     },
     {
       "id": "opportunity",
       "chapter": "01 \u00b7 The opportunity",
-      "start": 11.18,
+      "start": 11.183,
       "lines": [
         {
           "text": "In El Salvador, qualifying new investments in San Salvador's defined Historic Center may receive up to ten years of income-tax relief.",
-          "start": 11.43,
-          "end": 19.025
+          "start": 11.433,
+          "end": 19.029
         },
         {
           "text": "That's a specific regime for a specific area, not a nationwide rule.",
-          "start": 19.305,
-          "end": 23.101
+          "start": 19.309,
+          "end": 23.106
         },
         {
           "text": "And not every business qualifies.",
-          "start": 23.381,
-          "end": 25.122
+          "start": 23.386,
+          "end": 25.127
         }
       ],
-      "end": 25.372
+      "end": 25.377
     },
     {
       "id": "checks",
       "chapter": "02 \u00b7 Three checks",
-      "start": 25.372,
+      "start": 25.377,
       "lines": [
         {
           "text": "Start with three checks.",
-          "start": 25.622,
-          "end": 26.806
+          "start": 25.627,
+          "end": 26.811
         },
         {
           "text": "Location: inside the defined perimeter. One block outside can change the answer.",
-          "start": 27.086,
-          "end": 31.699
+          "start": 27.091,
+          "end": 31.705
         },
         {
           "text": "Investment: an eligible activity, such as food, lodging, or restoration, above the minimum.",
-          "start": 31.979,
-          "end": 36.937
+          "start": 31.985,
+          "end": 36.942
         },
         {
           "text": "Approval: the Planning Authority must qualify the project. No approval, no benefit.",
-          "start": 37.217,
-          "end": 41.803
+          "start": 37.222,
+          "end": 41.802
         }
       ],
-      "end": 42.053
+      "end": 42.052
     },
     {
       "id": "beneficiary",
       "chapter": "03 \u00b7 Who benefits",
-      "start": 42.053,
+      "start": 42.052,
       "lines": [
         {
           "text": "Then ask who receives it.",
-          "start": 42.303,
-          "end": 43.527
+          "start": 42.302,
+          "end": 43.53
         },
         {
           "text": "Owner, operator, and developer are often different companies.",
-          "start": 43.807,
-          "end": 47.137
+          "start": 43.81,
+          "end": 47.14
         },
         {
           "text": "A landlord's qualification doesn't automatically cut a tenant's taxes.",
-          "start": 47.417,
-          "end": 51.213
+          "start": 47.42,
+          "end": 51.216
         }
       ],
-      "end": 51.463
+      "end": 51.466
     },
     {
       "id": "economics",
       "chapter": "04 \u00b7 The arithmetic",
-      "start": 51.463,
+      "start": 51.466,
       "lines": [
         {
           "text": "Here's a simplified, hypothetical annual comparison, after tax.",
-          "start": 51.713,
-          "end": 55.21
+          "start": 51.716,
+          "end": 55.215
         },
         {
           "text": "Thirty thousand dollars of assumed tax savings, minus twenty-four thousand in added after-tax occupancy costs, leaves six thousand a year.",
-          "start": 55.49,
-          "end": 62.987
+          "start": 55.495,
+          "end": 62.991
         },
         {
           "text": "It leaves out other costs, timing, and risk. It's not a Salvadoran tax calculation or a promised return.",
-          "start": 63.267,
-          "end": 69.401
+          "start": 63.271,
+          "end": 69.409
         }
       ],
-      "end": 69.651
+      "end": 69.659
     },
     {
       "id": "execution",
       "chapter": "05 \u00b7 Execution",
-      "start": 69.651,
+      "start": 69.659,
       "lines": [
         {
           "text": "Demand, permits, utilities, and opening delays can erase a thin advantage.",
-          "start": 69.901,
-          "end": 74.324
+          "start": 69.909,
+          "end": 74.336
         },
         {
           "text": "Underwrite the base case without incentives, and show the benefit separately.",
-          "start": 74.604,
-          "end": 78.144
+          "start": 74.616,
+          "end": 78.153
         }
       ],
-      "end": 78.394
+      "end": 78.403
     },
     {
       "id": "services",
       "chapter": "How Aurora helps",
-      "start": 78.394,
+      "start": 78.403,
       "lines": [
         {
           "text": "That's the work Aurora does on the ground: verify eligibility, test the site, and model the real cost to open, before capital moves.",
-          "start": 78.644,
-          "end": 85.69
+          "start": 78.653,
+          "end": 85.698
         }
       ],
-      "end": 85.94
+      "end": 85.948
     },
     {
       "id": "close",
       "chapter": "",
-      "start": 85.94,
+      "start": 85.948,
       "lines": [
         {
-          "text": "Weighing a Historic Center site? Request an engagement at conaurora.com.",
-          "start": 86.19,
-          "end": 90.447
+          "text": "Follow Aurora for the economics behind expansion \u2014 not just the headline incentives.",
+          "start": 86.198,
+          "end": 90.446
         },
         {
-          "text": "And subscribe. Next: who receives the benefit \u2014 the owner, operator, or developer?",
-          "start": 90.727,
-          "end": 95.226
+          "text": "Next: who receives the benefit \u2014 the owner, operator, or developer?",
+          "start": 90.726,
+          "end": 94.143
         }
       ],
-      "end": 96.426
+      "end": 95.343
     }
   ],
-  "duration": 96.426
+  "duration": 95.343
 }

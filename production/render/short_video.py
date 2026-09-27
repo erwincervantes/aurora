@@ -13,7 +13,7 @@ import video_core as vc
 W, H = 1080, 1920
 LEFT, RIGHT = 80, 1000
 CAPTION_ZONE = (80, 1360, 960, 1548)
-SECTIONS = {"s_hook": "The question", "s_zone": "The zone", "s_checks": "Three checks", "s_benef": "Who benefits"}
+SECTIONS = {"s_hook": "The question", "s_zone": "Geography", "s_checks": "Eligibility", "s_benef": "Beneficiary"}
 
 
 class ShortFilm(vc.Film):
@@ -56,7 +56,7 @@ class ShortFilm(vc.Film):
         l0, l1 = self.line("s_hook", 0), self.line("s_hook", 1)
         a, dy = rise(t, l0["start"])
         text(ctx, "Up to", LEFT, 360 + dy, HEAD, 60, INK, alpha=a)
-        count = 1 + int(9 * ease_in_out(prog(t, phrase_time(l0, "ten years") - 0.3, 1.0)))
+        count = 1 + int(9 * ease_in_out(prog(t, phrase_time(l0, "ten-year") - 0.2, 1.0)))
         size, baseline = 440, 800
         big_number(ctx, str(count), LEFT - 10, baseline + dy, size, INK, alpha=a)
         ten_w = text_width(ctx, "10", NUM, size)
@@ -72,158 +72,159 @@ class ShortFilm(vc.Film):
             line(ctx, [(x, 840), (x, 840 - 18 * yp)], CORAL, 2.4)
             disc(ctx, x, 834 - 18 * yp, 6 * yp, CORAL)
         line(ctx, [(LEFT, 840), (LEFT + 828 * ease_out(prog(t, 0.8, 1.2)), 840)], CORAL, 1.6)
-        text(ctx, "of tax relief?", LEFT, 940 + dy, HEAD, 64, INK, alpha=a)
-        answers = [(phrase_time(l1, "For qualifying"), "Qualifying investments", "Potentially", "check"),
-                   (phrase_time(l1, "For every"), "Every business", "No", "cross")]
-        for k, (start, who, verdict, kind) in enumerate(answers):
-            y = 1010 + k * 112
-            ra, rdy = rise(t, start)
-            if ra <= 0:
-                continue
-            rect(ctx, LEFT, y + rdy, 920, 92, WHITE, ra, radius=10)
-            badge(ctx, LEFT + 50, y + 46 + rdy, 28, kind, prog(t, start + 0.1, 0.8))
-            text(ctx, who, LEFT + 100, y + 58 + rdy, SANS_SEMI, 34, INK, alpha=ra)
-            text(ctx, verdict, LEFT + 890, y + 64 + rdy, NUM, 50, CORAL if kind == "cross" else GREEN, "right", ra)
+        text(ctx, "of tax relief.", LEFT, 940 + dy, HEAD, 64, INK, alpha=a)
+        qa, qdy = rise(t, l1["start"])
+        if qa > 0:
+            line(ctx, [(LEFT, 1010), (LEFT + 920 * qa, 1010)], CORAL, 1.6)
+            text(ctx, "Does your project", LEFT, 1112 + qdy, WONK, 76, CORAL, alpha=qa)
+            text(ctx, "qualify?", LEFT, 1200 + qdy, WONK, 76, CORAL, alpha=qa)
+            person(ctx, 870, 1320, 300, INK, SKY, GOLD, arms="hold", prop="document", facing=-1,
+                   alpha=ease_out(prog(t, l1["start"] + 0.2, 0.5)))
 
-    # ------------------------------------------------------------ zone
+    # ------------------------------------------------------------ geography
     def s_zone(self, ctx, t):
         l0 = self.line("s_zone", 0)
-        text_block(ctx, "One defined Historic Center, not the whole country", LEFT, 350, HEAD, 62, INK, 900,
-                   1.12, p=prog(t, l0["start"], 1.2))
-        plan = CityPlan(LEFT, 540, 920, 620, cols=6, rows=6, gap=9,
+        a, dy = rise(t, l0["start"])
+        text(ctx, "San Salvador's Historic Center", LEFT, 350 + dy, HEAD, 64, INK, alpha=a)
+        text(ctx, "Within the defined area", LEFT, 412 + dy, SUB, 36, GREY, alpha=a)
+        plan = CityPlan(LEFT, 490, 920, 640, cols=6, rows=6, gap=9,
                         perimeter=((1, 1), (5, 1), (5, 3), (6, 3), (6, 5), (2, 5), (2, 4), (1, 4)))
-        plan.draw(ctx, t_grid=prog(t, l0["start"], 1.2), t_fill=prog(t, phrase_time(l0, "San Salvador"), 1.4))
-        la = ease_out(prog(t, phrase_time(l0, "defined Historic"), 0.5))
+        plan.draw(ctx, t_grid=prog(t, l0["start"], 1.2), t_fill=prog(t, phrase_time(l0, "qualifying new"), 1.4))
+        for k, ((c, r), kind) in enumerate((((2, 2), "check"), ((4, 3), "check"), ((5, 4), "question"))):
+            cx, cy = plan.block_center(c, r)
+            badge(ctx, cx, cy, 30, kind, prog(t, phrase_time(l0, "up to ten") + k * 0.3, 0.8))
+        la = ease_out(prog(t, phrase_time(l0, "qualifying new"), 0.5))
         if la > 0:
-            pointer(ctx, LEFT, 1204, 20, CORAL, la)
-            text(ctx, "San Salvador Historic Center", LEFT + 32, 1222, SANS_SEMI, 34, INK, alpha=la)
-            text(ctx, "Illustrative, not the legal map", LEFT + 32, 1264, SUB, 30, GREY, alpha=la)
+            pointer(ctx, LEFT, 1176, 20, CORAL, la)
+            text(ctx, "Up to 10 years of tax relief for qualifying new investments", LEFT + 32, 1194, SANS_SEMI, 30, INK, alpha=la)
+            text(ctx, "Illustrative, not the legal map", LEFT + 32, 1236, SUB, 28, GREY, alpha=la)
 
-    # ------------------------------------------------------------ checks
+    # ------------------------------------------------------------ eligibility
     def s_checks(self, ctx, t):
-        lines = [self.line("s_checks", i) for i in range(4)]
-        a, dy = rise(t, lines[0]["start"])
-        big_number(ctx, "3", LEFT - 6, 560 + dy, 300, INK, alpha=a)
-        text(ctx, "checks", LEFT + 190, 470 + dy, HEAD, 64, INK, alpha=a)
-        rows = [("Location", "Inside the defined perimeter"), ("Investment", "Eligible activity, above the minimum"),
-                ("Approval", "Qualified by the Planning Authority")]
-        for i, (title, sub) in enumerate(rows):
-            y = 650 + i * 110
-            appear = ease_out(prog(t, lines[0]["start"] + 0.15 + i * 0.12, 0.5))
+        ln = self.line("s_checks", 0)
+        a, dy = rise(t, ln["start"])
+        text(ctx, "Before you count", LEFT, 340 + dy, HEAD, 66, INK, alpha=a)
+        text(ctx, "the savings:", LEFT, 414 + dy, HEAD, 66, INK, alpha=a)
+        cues = [phrase_time(ln, p) for p in ("the exact location", "the qualifying investment", "the required approval")]
+        ends = cues[1:] + [ln["end"]]
+        rows = ("Location", "Investment", "Approval")
+        for i, title in enumerate(rows):
+            y = 530 + i * 110
+            appear = ease_out(prog(t, ln["start"] + 0.3 + i * 0.12, 0.5))
             if appear <= 0:
                 continue
-            active = prog(t, lines[i + 1]["start"], 0.4)
-            done = prog(t, lines[i + 1]["end"] - 0.4, 0.8)
+            active = prog(t, cues[i], 0.4)
+            done = prog(t, ends[i] - 0.3, 0.8)
             if done > 0:
-                badge(ctx, LEFT + 34, y, 34, "check", done)
+                badge(ctx, LEFT + 36, y, 36, "check", done)
             else:
-                marker(ctx, LEFT + 34, y, 34, i + 1, mix(RULE, CORAL, active), appear)
-            text(ctx, title, LEFT + 92, y + 4, SANS_SEMI, 42, INK, alpha=appear * (0.45 + 0.55 * max(active, done)))
-            text(ctx, sub, LEFT + 92, y + 44, SUB, 29, GREY, alpha=appear)
+                marker(ctx, LEFT + 36, y, 36, i + 1, mix(RULE, CORAL, active), appear)
+            text(ctx, title, LEFT + 100, y + 17, HEAD, 54, INK, alpha=appear * (0.4 + 0.6 * max(active, done)))
         for k in range(3):
-            start = lines[k + 1]["start"]
+            start = cues[k]
             p = prog(t, start, 0.55)
             if p <= 0:
                 continue
-            with wipe(ctx, LEFT - 10, 990, 940, 350, p, "right") as e:
-                rect(ctx, LEFT - 10, 990, 940, 350, PAGE)
+            with wipe(ctx, LEFT - 10, 890, 940, 380, p, "right") as e:
+                rect(ctx, LEFT - 10, 890, 940, 380, PAGE)
                 if k == 0:
-                    plan = CityPlan(LEFT, 1000, 920, 300, cols=5, rows=2, gap=9,
+                    plan = CityPlan(LEFT, 910, 920, 320, cols=5, rows=2, gap=9,
                                     perimeter=((0, 0), (3, 0), (3, 1), (2, 1), (2, 2), (0, 2)))
-                    plan.draw(ctx, 1, 1, highlight={(1, 0): (GOLD, prog(t, start + 0.4, 0.4)),
-                                                    (3, 1): (CORAL, prog(t, start + 0.8, 0.4))})
-                    for (c, r), kind, d in (((1, 0), "check", 0.6), ((3, 1), "cross", 1.0)):
+                    plan.draw(ctx, 1, 1, highlight={(1, 0): (GOLD, prog(t, start + 0.3, 0.4)),
+                                                    (3, 1): (CORAL, prog(t, start + 0.6, 0.4))})
+                    for (c, r), kind, d in (((1, 0), "check", 0.4), ((3, 1), "cross", 0.7)):
                         cx, cy = plan.block_center(c, r)
                         badge(ctx, cx, cy, 32, kind, prog(t, start + d, 0.8))
                 elif k == 1:
                     cx = LEFT
                     for j, (label, dot) in enumerate((("Food", ORANGE), ("Lodging", BLUE), ("Culture", PURPLE),
                                                       ("Restoration", PINK))):
-                        cx += pill(ctx, label, cx, 1010, WHITE, 28, alpha=ease_out(prog(t, start + j * 0.15, 0.4)),
+                        cx += pill(ctx, label, cx, 920, WHITE, 28, alpha=ease_out(prog(t, start + j * 0.12, 0.4)),
                                    dot=dot) + 12
-                    text(ctx, "Investment vs. minimum", LEFT, 1118, SANS_MED, 28, INK)
-                    x0, x1, y = LEFT, LEFT + 900, 1200
+                    text(ctx, "Eligible activity, above the minimum", LEFT, 1042, SANS_MED, 30, INK)
+                    x0, x1, y = LEFT, LEFT + 900, 1130
                     line(ctx, [(x0, y), (x1, y)], INK, 1.6)
                     for j in range(46):
                         tx = x0 + (x1 - x0) * j / 45
                         line(ctx, [(tx, y), (tx, y - (16 if j % 5 == 0 else 8))], INK, 1.2)
-                    fill = ease_out(prog(t, start + 0.5, 1.4)) * 0.8
+                    fill = ease_out(prog(t, start + 0.3, 1.2)) * 0.8
                     rect(ctx, x0, y + 10, (x1 - x0) * fill, 40, BLUE)
                     mx = x0 + (x1 - x0) * 0.6
                     line(ctx, [(mx, y - 34), (mx, y + 60)], CORAL, 3.4)
                     text(ctx, "Minimum", mx + 12, y - 16, SANS_SEMI, 28, CORAL)
                 else:
-                    document(ctx, LEFT + 40, 1010, 200, 260, 6, prog(t, start, 0.8), rotate=-0.05)
-                    stamp(ctx, LEFT + 250, 1220, 76, prog(t, start + 0.8, 0.8))
-                    fade = ease_out(prog(t, start + 0.4, 0.5))
-                    text(ctx, "APLAN", LEFT + 400, 1110, NUM, 84, INK, alpha=fade)
-                    text(ctx, "Historic Center", LEFT + 400, 1164, SANS_MED, 32, INK, alpha=fade)
-                    text(ctx, "Planning Authority", LEFT + 400, 1204, SANS_MED, 32, INK, alpha=fade)
-                    text(ctx, "Single window", LEFT + 400, 1246, SUB, 30, GREY, alpha=fade)
+                    document(ctx, LEFT + 40, 920, 200, 260, 6, prog(t, start, 0.6), rotate=-0.05)
+                    stamp(ctx, LEFT + 250, 1130, 76, prog(t, start + 0.5, 0.8))
+                    fade = ease_out(prog(t, start + 0.3, 0.5))
+                    text(ctx, "APLAN", LEFT + 400, 1020, NUM, 84, INK, alpha=fade)
+                    text(ctx, "Historic Center", LEFT + 400, 1074, SANS_MED, 32, INK, alpha=fade)
+                    text(ctx, "Planning Authority", LEFT + 400, 1114, SANS_MED, 32, INK, alpha=fade)
             if 0 < e < 1:
-                line(ctx, [(LEFT - 10 + 940 * e, 995), (LEFT - 10 + 940 * e, 1335)], CORAL, 2.4)
+                line(ctx, [(LEFT - 10 + 940 * e, 895), (LEFT - 10 + 940 * e, 1265)], CORAL, 2.4)
 
     # ------------------------------------------------------------ beneficiary
     def s_benef(self, ctx, t):
-        l0 = self.line("s_benef", 0)
+        l0, l1 = self.line("s_benef", 0), self.line("s_benef", 1)
         a, dy = rise(t, l0["start"])
-        text(ctx, "Who receives it?", LEFT, 350 + dy, HEAD, 76, INK, alpha=a)
-        resolve = phrase_time(l0, "A landlord")
-        groups = [("Owner · landlord", INK, SKY, {"prop": "keys", "arms": "hold"}, "check"),
-                  ("Operator · tenant", WHITE, PURPLE,
-                   {"coat": True, "arms": "present", "hair_style": "bun"}, "cross"),
-                  ("Developer", SKY, INK, {"hardhat": True, "arms": "point"}, "question")]
-        for i, (title, top, bottom_c, pose, final) in enumerate(groups):
-            y = 470 + i * 215
-            start = l0["start"] + 0.3 + i * 0.25
+        text(ctx, "Who receives", LEFT, 340 + dy, HEAD, 72, INK, alpha=a)
+        text(ctx, "the benefit?", LEFT, 420 + dy, HEAD, 72, INK, alpha=a)
+        resolve = l1["start"]
+        groups = [("Owner", "Landlord", INK, SKY, {"prop": "keys", "arms": "hold"}, "check"),
+                  ("Operator", "Tenant", WHITE, PURPLE, {"coat": True, "arms": "present", "hair_style": "bun"}, "cross"),
+                  ("Developer", "Builds the project", SKY, INK, {"hardhat": True, "arms": "point"}, "question")]
+        for i, (title, role, top, bottom_c, pose, final) in enumerate(groups):
+            y = 480 + i * 200
+            start = phrase_time(l0, "who actually") + i * 0.25
             ra, rdy = rise(t, start)
             if ra <= 0:
                 continue
-            rect(ctx, LEFT, y + rdy, 920, 195, LIGHT, ra, radius=12)
+            rect(ctx, LEFT, y + rdy, 920, 180, LIGHT, ra, radius=12)
             ctx.save()
-            ctx.rectangle(LEFT, y + rdy, 920, 195)
+            ctx.rectangle(LEFT, y + rdy, 920, 180)
             ctx.clip()
-            person(ctx, LEFT + 100, y + 190 + rdy, 175, top, bottom_c, GOLD if i == 0 else CORAL, alpha=ra, **pose)
+            person(ctx, LEFT + 100, y + 176 + rdy, 165, top, bottom_c, GOLD if i == 0 else CORAL, alpha=ra, **pose)
             ctx.restore()
-            text(ctx, title, LEFT + 210, y + 112 + rdy, SANS_SEMI, 44, INK, alpha=ra)
+            text(ctx, title, LEFT + 210, y + 88 + rdy, HEAD, 48, INK, alpha=ra)
+            text(ctx, role, LEFT + 210, y + 132 + rdy, SUB, 30, GREY, alpha=ra)
             kind = final if t > resolve + 0.25 * i else "question"
             bstart = start + 0.2 if kind == "question" else resolve + 0.25 * i
-            badge(ctx, LEFT + 850, y + 97 + rdy, 36, kind, prog(t, bstart, 0.8))
-        na, ndy = rise(t, phrase_time(l0, "automatically"))
+            badge(ctx, LEFT + 850, y + 90 + rdy, 36, kind, prog(t, bstart, 0.8))
+        na, ndy = rise(t, phrase_time(l1, "does not"))
         if na > 0:
-            rect(ctx, LEFT, 1135 + ndy, 920, 180, CORAL, na, radius=12)
-            text(ctx, "Landlord approved ≠", LEFT + 40, 1208 + ndy, HEAD, 50, WHITE, alpha=na)
-            text(ctx, "tenant benefits automatically", LEFT + 40, 1270 + ndy, SANS, 44, WHITE, alpha=na)
+            rect(ctx, LEFT, 1100 + ndy, 920, 200, CORAL, na, radius=12)
+            text_block(ctx, "A landlord's approval does not automatically extend to the tenant.", LEFT + 40, 1172 + ndy,
+                       HEAD, 46, WHITE, 840, 1.18, alpha=na)
 
-    # ------------------------------------------------------------ close: qualified inquiry
+    # ------------------------------------------------------------ close: a reason to keep watching
     def s_close(self, ctx, t):
         s = self.scenes["s_close"]["start"]
         l0 = self.line("s_close", 0)
         a = ease_out(prog(t, s + 0.2, 0.6))
         wordmark(ctx, W / 2, 330, 80, reverse=True, alpha=a, align="center")
         text(ctx, "LATIN AMERICA EXPANSION", W / 2, 420, MONO, 22, CORAL, "center", a, tracking=3)
-        qa, qdy = rise(t, l0["start"])
-        text_block(ctx, "Weighing a site in the Historic Center?", W / 2, 540 + qdy, HEAD, 62, LOGO_CREAM, 860, 1.12,
-                   "center", qa)
-        cp = prog(t, phrase_time(l0, "Request an engagement"), 0.6)
-        if cp > 0:
-            with pop(ctx, W / 2, 740, cp):
-                pill(ctx, "Request an engagement  →", W / 2, 704, ORANGE, 36, LOGO_INK, SANS_SEMI, pad_x=44, align="center")
-        ua, _ = rise(t, phrase_time(l0, "conaurora.com"))
-        text(ctx, "conaurora.com", W / 2, 852, SANS_SEMI, 40, LOGO_CREAM, "center", alpha=ua)
-        text_block(ctx, "Share your role, market, and mandate stage. An advisor follows up.", W / 2, 904, SUB, 30, SKY,
-                   820, 1.25, "center", ua)
-        sp = prog(t, phrase_time(l0, "subscribe"), 0.6)
+        ua, udy = rise(t, l0["start"])
+        text(ctx, "Understand the incentive.", W / 2, 560 + udy, HEAD, 66, LOGO_CREAM, "center", ua)
+        wa, wdy = rise(t, phrase_time(l0, "economics"))
+        text(ctx, "Underwrite the opportunity.", W / 2, 650 + wdy, WONK, 66, AMBER_LT, "center", wa)
+        sp = prog(t, phrase_time(l0, "economics") + 0.5, 0.6)
         if sp > 0:
-            with wipe(ctx, LEFT, 1030, 920, 300, sp, "up"):
-                rect(ctx, LEFT, 1030, 920, 300, PAGE, radius=14)
-                na = ease_out(prog(t, phrase_time(l0, "subscribe") + 0.2, 0.5))
-                text(ctx, "SUBSCRIBE · @CONAURORA", LEFT + 44, 1088, MONO, 24, CORAL, alpha=na, tracking=2)
-                text_block(ctx, "Next: who actually gets the benefit?", LEFT + 44, 1150, HEAD, 46, INK, 520, 1.12, alpha=na)
+            with pop(ctx, W / 2, 790, sp):
+                pill(ctx, "Subscribe to @ConAurora", W / 2, 754, ORANGE, 38, LOGO_INK, SANS_SEMI, pad_x=48, align="center")
+        ea, _ = rise(t, phrase_time(l0, "not just"))
+        text_block(ctx, "The economics behind expansion, not just the headline incentives.", W / 2, 910, SUB, 32, SKY,
+                   820, 1.25, "center", ea)
+        np_ = prog(t, phrase_time(l0, "not just") + 0.3, 0.6)
+        if np_ > 0:
+            with wipe(ctx, LEFT, 1050, 920, 270, np_, "up"):
+                rect(ctx, LEFT, 1050, 920, 270, PAGE, radius=14)
+                na = ease_out(prog(t, phrase_time(l0, "not just") + 0.5, 0.5))
+                text(ctx, "NEXT BREAKDOWN", LEFT + 44, 1108, MONO, 24, CORAL, alpha=na, tracking=2)
+                text_block(ctx, "Who actually gets the benefit?", LEFT + 44, 1170, HEAD, 46, INK, 520, 1.12, alpha=na)
                 for k, (top, bottom_c, kw) in enumerate(((INK, SKY, {"prop": "keys", "arms": "hold"}),
                                                         (WHITE, PURPLE, {"coat": True, "hair_style": "bun"}),
                                                         (SKY, INK, {"hardhat": True, "arms": "point", "facing": -1}))):
-                    person(ctx, 680 + k * 100, 1300, 190, top, bottom_c, alpha=ease_out(prog(t, phrase_time(l0, "subscribe") + 0.3 + k * 0.15, 0.4)), **kw)
+                    person(ctx, 680 + k * 100, 1300, 190, top, bottom_c,
+                           alpha=ease_out(prog(t, phrase_time(l0, "not just") + 0.6 + k * 0.15, 0.4)), **kw)
 
 
 def main():

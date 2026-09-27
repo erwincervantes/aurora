@@ -555,30 +555,29 @@ class MainFilm(vc.Film):
             text(ctx, title, x, 812 + ndy, SANS_SEMI, 28, INK, alpha=na)
             text(ctx, detail, x, 846 + ndy, SUB, 22, GREY, alpha=na)
 
-    # ------------------------------------------------------------ 9. close: qualified inquiry
+    # ------------------------------------------------------------ 9. close: a reason to keep watching
     def scene_close(self, ctx, t):
         s = self.scenes["close"]["start"]
         l0, l1 = self.line("close", 0), self.line("close", 1)
         a = ease_out(prog(t, s + 0.2, 0.6))
         wordmark(ctx, W / 2, 236, 72, reverse=True, alpha=a, align="center")
         text(ctx, "LATIN AMERICA EXPANSION & EXECUTION", W / 2, 312, MONO, 18, CORAL, "center", a, tracking=3)
-        qa, qdy = rise(t, l0["start"])
-        text(ctx, "Weighing a Historic Center site?", W / 2, 396 + qdy, HEAD, 52, LOGO_CREAM, "center", qa)
-        cp = prog(t, phrase_time(l0, "Request an engagement"), 0.6)
-        if cp > 0:
-            with pop(ctx, W / 2, 478, cp):
-                pill(ctx, "Request an engagement  →", W / 2, 448, ORANGE, 30, LOGO_INK, SANS_SEMI, pad_x=44, align="center")
-        ua, _ = rise(t, phrase_time(l0, "conaurora.com"))
-        text(ctx, "conaurora.com", W / 2, 562, SANS_SEMI, 30, LOGO_CREAM, "center", alpha=ua)
-        text(ctx, "Share your role, market, and mandate stage. An advisor follows up.", W / 2, 598, SUB, 22, SKY,
-             "center", alpha=ua)
-        sa = ease_out(prog(t, phrase_time(l1, "subscribe"), 0.5))
-        text(ctx, "Subscribe  ·  @ConAurora", W / 2, 646, SANS_MED, 24, LOGO_CREAM, "center", alpha=sa)
-        np_ = prog(t, phrase_time(l1, "Next") - 0.1, 0.6)
+        ua, udy = rise(t, l0["start"])
+        text(ctx, "Understand the incentive.", W / 2, 400 + udy, HEAD, 54, LOGO_CREAM, "center", ua)
+        wa, wdy = rise(t, phrase_time(l0, "economics"))
+        text(ctx, "Underwrite the opportunity.", W / 2, 470 + wdy, WONK, 54, AMBER_LT, "center", wa)
+        sp = prog(t, phrase_time(l0, "economics") + 0.5, 0.6)
+        if sp > 0:
+            with pop(ctx, W / 2, 552, sp):
+                pill(ctx, "Subscribe to @ConAurora", W / 2, 524, ORANGE, 30, LOGO_INK, SANS_SEMI, pad_x=44, align="center")
+        ea, _ = rise(t, phrase_time(l0, "not just"))
+        text(ctx, "The economics behind expansion, not just the headline incentives.", W / 2, 630, SUB, 24, SKY,
+             "center", alpha=ea)
+        np_ = prog(t, l1["start"] - 0.1, 0.6)
         if np_ > 0:
             with wipe(ctx, 380, 684, 1160, 200, np_, "up"):
                 rect(ctx, 380, 684, 1160, 200, PAGE, radius=10)
-                na = ease_out(prog(t, phrase_time(l1, "Next") + 0.2, 0.5))
+                na = ease_out(prog(t, l1["start"] + 0.2, 0.5))
                 text(ctx, "NEXT EPISODE", 420, 728, MONO, 18, CORAL, alpha=na, tracking=2)
                 text_block(ctx, "Who receives the benefit: the owner, operator, or developer?", 420, 780, HEAD, 36,
                            INK, 700, 1.15, alpha=na)

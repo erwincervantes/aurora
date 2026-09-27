@@ -13,12 +13,12 @@ ON_SCREEN = {
     "economics": "Simplified hypothetical · annual, after tax: $30,000 − $24,000 = $6,000 as hero numerals; flat waterfall chart; 'Excludes other cost, timing, and risk differences. Not a calculation of Salvadoran tax liability. Not a promised return.'",
     "execution": "Execution still decides the outcome — 01 Demand, 02 Permits, 03 Utilities, 04 Opening delays; eroding advantage bar / Underwrite in two layers — 1 Base case (no incentives) · 2 Qualified benefit (striped, subject to approval)",
     "services": "How Aurora helps — From market entry to operating launch: 01 Verify eligibility · 02 Test the site · 03 Model the real cost to open",
-    "close": "Aurora lockup; 'Weighing a Historic Center site?'; CTA 'Request an engagement →' · conaurora.com · 'Share your role, market, and mandate stage. An advisor follows up.'; Subscribe · @ConAurora; Next episode card",
-    "s_hook": "Up to 10 years of tax relief? — counting numeral with seated reader; Qualifying investments: Potentially / Every business: No",
-    "s_zone": "One defined Historic Center, not the whole country — orange block map (illustrative)",
-    "s_checks": "3 checks: Location · Investment · Approval (APLAN)",
-    "s_benef": "Who receives it? — Owner · landlord ✓ / Operator · tenant ✗ / Developer ? — 'Landlord approved ≠ tenant benefits automatically'",
-    "s_close": "Aurora lockup; 'Weighing a site in the Historic Center?'; CTA 'Request an engagement →' · conaurora.com; Subscribe · @ConAurora; Next: who actually gets the benefit?",
+    "close": "Aurora lockup; Understand the incentive. / Underwrite the opportunity. / Subscribe to @ConAurora; The economics behind expansion, not just the headline incentives; Next episode card",
+    "s_hook": "Up to 10 years of tax relief. Does your project qualify? (counting numeral with seated reader)",
+    "s_zone": "San Salvador's Historic Center · Within the defined area (orange block map, illustrative)",
+    "s_checks": "Before you count the savings: Location · Investment · Approval",
+    "s_benef": "Who receives the benefit? Owner · Operator · Developer; A landlord's approval does not automatically extend to the tenant.",
+    "s_close": "Understand the incentive. / Underwrite the opportunity. / Subscribe to @ConAurora; Next breakdown: Who actually gets the benefit?",
 }
 
 

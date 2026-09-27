@@ -8,85 +8,75 @@
       "start": 0.0,
       "lines": [
         {
-          "text": "Up to ten years of tax relief?",
+          "text": "A ten-year tax break sounds compelling.",
           "start": 0.4,
-          "end": 2.077
+          "end": 2.594
         },
         {
-          "text": "For qualifying investments, potentially. For every business, no.",
-          "start": 2.377,
-          "end": 6.151
+          "text": "But does your project qualify?",
+          "start": 2.894,
+          "end": 4.431
         }
       ],
-      "end": 6.401
+      "end": 4.706
     },
     {
       "id": "s_zone",
       "chapter": "",
-      "start": 6.401,
+      "start": 4.706,
       "lines": [
         {
-          "text": "It applies only to new investments in San Salvador's defined Historic Center.",
-          "start": 6.651,
-          "end": 10.864
+          "text": "In San Salvador's Historic Center, qualifying new investments may receive up to ten years of tax relief.",
+          "start": 4.981,
+          "end": 10.861
         }
       ],
-      "end": 11.114
+      "end": 11.136
     },
     {
       "id": "s_checks",
       "chapter": "",
-      "start": 11.114,
+      "start": 11.136,
       "lines": [
         {
-          "text": "Check three things.",
-          "start": 11.364,
-          "end": 12.304
-        },
-        {
-          "text": "Location: inside the perimeter.",
-          "start": 12.604,
-          "end": 14.309
-        },
-        {
-          "text": "Investment: an eligible activity, above the minimum.",
-          "start": 14.609,
-          "end": 17.466
-        },
-        {
-          "text": "Approval: qualified by the Planning Authority.",
-          "start": 17.766,
-          "end": 19.977
+          "text": "Before counting the savings, check three things: the exact location, the qualifying investment, and the required approval.",
+          "start": 11.412,
+          "end": 17.816
         }
       ],
-      "end": 20.227
+      "end": 18.091
     },
     {
       "id": "s_benef",
       "chapter": "",
-      "start": 20.227,
+      "start": 18.091,
       "lines": [
         {
-          "text": "Then ask who receives it. A landlord's approval doesn't automatically cut a tenant's taxes.",
-          "start": 20.477,
-          "end": 25.374
+          "text": "Then ask the question that matters: who actually receives the benefit?",
+          "start": 18.366,
+          "end": 21.989
+        },
+        {
+          "text": "A landlord's approval does not automatically extend to the tenant.",
+          "start": 22.289,
+          "end": 25.886
         }
       ],
-      "end": 25.624
+      "end": 26.161
     },
     {
       "id": "s_close",
       "chapter": "",
-      "start": 25.624,
+      "start": 26.161,
       "lines": [
         {
-          "text": "Weighing a site there? Request an engagement at conaurora.com, or subscribe for the next breakdown.",
-          "start": 25.874,
-          "end": 31.452
+          "text": "Follow Aurora for the economics behind expansion \u2014 not just the headline incentives.",
+          "start": 26.436,
+          "end": 30.847
         }
       ],
-      "end": 32.652
+      "end": 32.447
     }
   ],
-  "duration": 32.652
+  "duration": 32.447
 }
