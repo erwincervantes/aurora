@@ -26,146 +26,159 @@
       "start": 5.759,
       "lines": [
         {
-          "text": "Here's which incentive applies, who receives the benefit, and what remains after location and execution costs.",
+          "text": "Here's who qualifies, who actually benefits, and what's left after location and execution costs.",
           "start": 6.009,
-          "end": 11.518
+          "end": 10.93
         }
       ],
-      "end": 11.768
+      "end": 11.18
     },
     {
       "id": "opportunity",
       "chapter": "01 \u00b7 The opportunity",
-      "start": 11.768,
+      "start": 11.18,
       "lines": [
         {
           "text": "In El Salvador, qualifying new investments in San Salvador's defined Historic Center may receive up to ten years of income-tax relief.",
-          "start": 12.018,
-          "end": 19.611
+          "start": 11.43,
+          "end": 19.025
         },
         {
-          "text": "That's a specific regime for a specific area, separate from nationwide programs.",
-          "start": 19.891,
-          "end": 24.225
+          "text": "That's a specific regime for a specific area, not a nationwide rule.",
+          "start": 19.305,
+          "end": 23.101
         },
         {
-          "text": "Not every business qualifies, so verify current rules before underwriting.",
-          "start": 24.505,
-          "end": 28.422
+          "text": "And not every business qualifies.",
+          "start": 23.381,
+          "end": 25.122
         }
       ],
-      "end": 28.672
+      "end": 25.372
     },
     {
       "id": "checks",
       "chapter": "02 \u00b7 Three checks",
-      "start": 28.672,
+      "start": 25.372,
       "lines": [
         {
           "text": "Start with three checks.",
-          "start": 28.922,
-          "end": 30.11
+          "start": 25.622,
+          "end": 26.806
         },
         {
-          "text": "First, exact location: inside the defined perimeter. One block outside can change the answer.",
-          "start": 30.39,
-          "end": 35.855
+          "text": "Location: inside the defined perimeter. One block outside can change the answer.",
+          "start": 27.086,
+          "end": 31.699
         },
         {
-          "text": "Second, a qualifying investment: an eligible activity, like food, lodging, or restoration, above the minimum.",
-          "start": 36.135,
-          "end": 42.191
+          "text": "Investment: an eligible activity, such as food, lodging, or restoration, above the minimum.",
+          "start": 31.979,
+          "end": 36.937
         },
         {
-          "text": "Third, approval: the Historic Center's Planning Authority must qualify the project. No approval, no benefit.",
-          "start": 42.471,
-          "end": 48.306
+          "text": "Approval: the Planning Authority must qualify the project. No approval, no benefit.",
+          "start": 37.217,
+          "end": 41.803
         }
       ],
-      "end": 48.556
+      "end": 42.053
     },
     {
       "id": "beneficiary",
       "chapter": "03 \u00b7 Who benefits",
-      "start": 48.556,
+      "start": 42.053,
       "lines": [
         {
-          "text": "Then ask: which entity receives the benefit?",
-          "start": 48.806,
-          "end": 50.985
+          "text": "Then ask who receives it.",
+          "start": 42.303,
+          "end": 43.527
         },
         {
           "text": "Owner, operator, and developer are often different companies.",
-          "start": 51.265,
-          "end": 54.593
+          "start": 43.807,
+          "end": 47.137
         },
         {
-          "text": "A landlord's qualification doesn't automatically lower a tenant's taxes.",
-          "start": 54.873,
-          "end": 58.744
+          "text": "A landlord's qualification doesn't automatically cut a tenant's taxes.",
+          "start": 47.417,
+          "end": 51.213
         }
       ],
-      "end": 58.994
+      "end": 51.463
     },
     {
       "id": "economics",
       "chapter": "04 \u00b7 The arithmetic",
-      "start": 58.994,
+      "start": 51.463,
       "lines": [
         {
-          "text": "Here's a simplified, hypothetical annual after-tax comparison.",
-          "start": 59.244,
-          "end": 62.795
+          "text": "Here's a simplified, hypothetical annual comparison, after tax.",
+          "start": 51.713,
+          "end": 55.21
         },
         {
-          "text": "Thirty thousand dollars of assumed tax savings, minus twenty-four thousand in additional after-tax occupancy costs, leaves six thousand a year.",
-          "start": 63.075,
-          "end": 70.715
+          "text": "Thirty thousand dollars of assumed tax savings, minus twenty-four thousand in added after-tax occupancy costs, leaves six thousand a year.",
+          "start": 55.49,
+          "end": 62.987
         },
         {
-          "text": "It excludes other cost, timing, and risk differences. It's not a Salvadoran tax calculation, or a promised return.",
-          "start": 70.995,
-          "end": 77.769
+          "text": "It leaves out other costs, timing, and risk. It's not a Salvadoran tax calculation or a promised return.",
+          "start": 63.267,
+          "end": 69.401
         }
       ],
-      "end": 78.019
+      "end": 69.651
     },
     {
       "id": "execution",
       "chapter": "05 \u00b7 Execution",
-      "start": 78.019,
+      "start": 69.651,
       "lines": [
         {
-          "text": "Execution still matters: demand, permits, utilities, and opening delays can erase a thin advantage.",
-          "start": 78.269,
-          "end": 83.925
+          "text": "Demand, permits, utilities, and opening delays can erase a thin advantage.",
+          "start": 69.901,
+          "end": 74.324
         },
         {
-          "text": "So underwrite the base case without incentives, then show the qualified benefit separately.",
-          "start": 84.205,
-          "end": 88.692
+          "text": "Underwrite the base case without incentives, and show the benefit separately.",
+          "start": 74.604,
+          "end": 78.144
         }
       ],
-      "end": 88.942
+      "end": 78.394
+    },
+    {
+      "id": "services",
+      "chapter": "How Aurora helps",
+      "start": 78.394,
+      "lines": [
+        {
+          "text": "That's the work Aurora does on the ground: verify eligibility, test the site, and model the real cost to open, before capital moves.",
+          "start": 78.644,
+          "end": 85.69
+        }
+      ],
+      "end": 85.94
     },
     {
       "id": "close",
       "chapter": "",
-      "start": 88.942,
+      "start": 85.94,
       "lines": [
         {
-          "text": "Subscribe to Aurora for illustrated breakdowns of incentives, locations, and the real cost to open.",
-          "start": 89.192,
-          "end": 94.612
+          "text": "Weighing a Historic Center site? Request an engagement at conaurora.com.",
+          "start": 86.19,
+          "end": 90.447
         },
         {
-          "text": "Next: who receives the benefit \u2014 the owner, operator, or developer?",
-          "start": 94.892,
-          "end": 98.311
+          "text": "And subscribe. Next: who receives the benefit \u2014 the owner, operator, or developer?",
+          "start": 90.727,
+          "end": 95.226
         }
       ],
-      "end": 99.511
+      "end": 96.426
     }
   ],
-  "duration": 99.511
+  "duration": 96.426
 }

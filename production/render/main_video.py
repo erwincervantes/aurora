@@ -23,7 +23,7 @@ assert REMAINING_ANNUAL_ADVANTAGE == 6_000, "narration and on-screen arithmetic 
 
 SECTIONS = {  # scene id -> coral section label
     "hook": "The question", "promise": "In this film", "opportunity": "The opportunity", "checks": "Three checks",
-    "beneficiary": "Who benefits", "economics": "The arithmetic", "execution": "Execution",
+    "beneficiary": "Who benefits", "economics": "The arithmetic", "execution": "Execution", "services": "How Aurora helps",
 }
 
 
@@ -117,9 +117,9 @@ class MainFilm(vc.Film):
         text(ctx, "El Salvador Tax Incentives", LEFT, 330 + dy, HEAD, 76, INK, alpha=a)
         a2, dy2 = rise(t, s + 0.6)
         text(ctx, "Who qualifies for up to 10 years of relief?", LEFT, 392 + dy2, SUB, 40, INK, alpha=a2)
-        items = [("which incentive applies", "Which incentive applies"),
-                 ("who receives the benefit", "Who receives the benefit"),
-                 ("what remains", "What remains after location and execution costs")]
+        items = [("who qualifies", "Who qualifies"),
+                 ("who actually benefits", "Who actually benefits"),
+                 ("what's left", "What's left after location and execution costs")]
         for i, (phrase, label) in enumerate(items):
             start = phrase_time(ln, phrase) - 0.2
             x = LEFT + i * 560
@@ -190,7 +190,7 @@ class MainFilm(vc.Film):
             pointer(ctx, 900, 712, 16, CORAL, la)
             text(ctx, "San Salvador Historic Center", 926, 726, SANS_SEMI, 24, INK, alpha=la)
             text(ctx, "Defined perimeter — illustrative, not the legal map", 926, 756, SUB, 22, GREY, alpha=la)
-        ra = ease_out(prog(t, phrase_time(l1, "separate from"), 0.5))
+        ra = ease_out(prog(t, phrase_time(l1, "not a nationwide"), 0.5))
         if ra > 0:
             text(ctx, "Separate nationwide regimes, separate rules:", 900, 812, SANS_MED, 22, INK, alpha=ra)
             cx = 900
@@ -440,7 +440,7 @@ class MainFilm(vc.Film):
     def _execution_risks(self, ctx, t, l0):
         a, dy = rise(t, l0["start"])
         text(ctx, "Execution still decides the outcome", LEFT, 330 + dy, HEAD, 54, INK, alpha=a)
-        items = [("Demand", "demand"), ("Permits", "permits"),
+        items = [("Demand", "Demand"), ("Permits", "permits"),
                  ("Utilities", "utilities"), ("Opening delays", "opening delays")]
         for i, (label, cue) in enumerate(items):
             start = phrase_time(l0, cue) - 0.1
@@ -487,7 +487,7 @@ class MainFilm(vc.Film):
         text(ctx, "Underwrite in two layers", LEFT, 330 + dy, HEAD, 54, INK, alpha=a)
         columns = [(LEFT, "1 · Base case", "No incentives assumed. It must work on its own.", l1["start"] + 0.3, False),
                    (1000, "2 · Qualified benefit", "Shown separately, only if approved.",
-                    phrase_time(l1, "show the qualified"), True)]
+                    phrase_time(l1, "show the benefit"), True)]
         for x, title, sub, start, benefit in columns:
             ca, cdy = rise(t, start)
             if ca <= 0:
@@ -516,38 +516,77 @@ class MainFilm(vc.Film):
                 pill(ctx, "Subject to approval", x, 500, CORAL, 21, WHITE, SANS_SEMI, alpha=ca)
                 stamp(ctx, x + 600, 620, 58, prog(t, start + 1.2, 0.8))
 
-    # ------------------------------------------------------------ 8. close
+    # ------------------------------------------------------------ 8. how Aurora helps
+    def scene_services(self, ctx, t):
+        ln = self.line("services", 0)
+        a, dy = rise(t, ln["start"])
+        text(ctx, "From market entry to operating launch", LEFT, 318 + dy, HEAD, 56, INK, alpha=a)
+        text(ctx, "Aurora works inside the project, before capital moves.", LEFT, 362 + dy, SUB, 26, GREY, alpha=a)
+        services = [("verify eligibility", "Verify eligibility", "Zone, activity, threshold, and approval path"),
+                    ("test the site", "Test the site", "Demand, permits, utilities, and timeline"),
+                    ("model the real cost", "Model the real cost to open", "Base case first; qualified benefit shown separately")]
+        base = 660
+        for i, (cue, title, detail) in enumerate(services):
+            start = phrase_time(ln, cue) - 0.2
+            x = LEFT + i * 560
+            ip = prog(t, start, 0.8)
+            if ip <= 0:
+                continue
+            if i == 0:
+                plan = CityPlan(x + 170, 440, 300, 200, cols=4, rows=3, gap=6,
+                                perimeter=((0, 0), (3, 0), (3, 2), (2, 2), (2, 3), (0, 3)))
+                plan.draw(ctx, ip, prog(t, start + 0.3, 0.8))
+                person(ctx, x + 150, base, 220, WHITE, BLUE, CORAL, coat=True, arms="hold", prop="magnifier",
+                       alpha=ease_out(prog(t, start + 0.2, 0.5)))
+            elif i == 1:
+                facade(ctx, x + 250, base, 200, 210, GREEN, "grid", ip)
+                person(ctx, x + 170, base, 220, SKY, INK, GOLD, hardhat=True, arms="point", facing=1,
+                       alpha=ease_out(prog(t, start + 0.2, 0.5)))
+            else:
+                for k, (bh, color) in enumerate(((150, INK), (160, INK), (170, INK))):
+                    bp = ease_out(prog(t, start + 0.2 + k * 0.12, 0.5))
+                    rect(ctx, x + 230 + k * 70, base - bh * bp, 50, bh * bp, color)
+                    rect(ctx, x + 230 + k * 70, base - bh * bp - 34 * bp, 50, 30 * bp, ORANGE)
+                person(ctx, x + 150, base, 220, INK, SKY, GOLD, arms="present", facing=1, prop="tablet",
+                       alpha=ease_out(prog(t, start + 0.2, 0.5)))
+            na, ndy = rise(t, start + 0.2)
+            big_number(ctx, f"0{i + 1}", x, 750 + ndy, 64, INK, alpha=na)
+            line(ctx, [(x, 772), (x + 480 * na, 772)], CORAL, 1.4)
+            text(ctx, title, x, 812 + ndy, SANS_SEMI, 28, INK, alpha=na)
+            text(ctx, detail, x, 846 + ndy, SUB, 22, GREY, alpha=na)
+
+    # ------------------------------------------------------------ 9. close: qualified inquiry
     def scene_close(self, ctx, t):
         s = self.scenes["close"]["start"]
         l0, l1 = self.line("close", 0), self.line("close", 1)
-        a = ease_out(prog(t, s + 0.3, 0.7))
-        ctx.save()
-        ctx.translate(0, (1 - a) * 20)
-        wordmark(ctx, W / 2, 300, 104, reverse=True, alpha=a, align="center")
-        ctx.restore()
-        text(ctx, "LATIN AMERICA EXPANSION", W / 2, 392, MONO, 20, CORAL, "center", a, tracking=3)
-        ba, bdy = rise(t, phrase_time(l0, "illustrated"))
-        text(ctx, "Illustrated breakdowns of incentives, locations, and the real cost to open.", W / 2, 452 + bdy,
-             SANS, 30, WHITE, "center", alpha=ba)
-        sp = prog(t, l0["start"], 0.6)
-        if sp > 0:
-            with pop(ctx, W / 2, 536, sp):
-                pill(ctx, "Subscribe", W / 2, 504, ORANGE, 30, LOGO_INK, SANS_SEMI, pad_x=48, align="center")
-        ha, _ = rise(t, l0["start"] + 0.6)
-        text(ctx, "@ConAurora  ·  conaurora.com", W / 2, 628, SANS_MED, 28, WHITE, "center", alpha=ha)
-        np_ = prog(t, l1["start"] - 0.1, 0.6)
+        a = ease_out(prog(t, s + 0.2, 0.6))
+        wordmark(ctx, W / 2, 236, 72, reverse=True, alpha=a, align="center")
+        text(ctx, "LATIN AMERICA EXPANSION & EXECUTION", W / 2, 312, MONO, 18, CORAL, "center", a, tracking=3)
+        qa, qdy = rise(t, l0["start"])
+        text(ctx, "Weighing a Historic Center site?", W / 2, 396 + qdy, HEAD, 52, LOGO_CREAM, "center", qa)
+        cp = prog(t, phrase_time(l0, "Request an engagement"), 0.6)
+        if cp > 0:
+            with pop(ctx, W / 2, 478, cp):
+                pill(ctx, "Request an engagement  →", W / 2, 448, ORANGE, 30, LOGO_INK, SANS_SEMI, pad_x=44, align="center")
+        ua, _ = rise(t, phrase_time(l0, "conaurora.com"))
+        text(ctx, "conaurora.com", W / 2, 562, SANS_SEMI, 30, LOGO_CREAM, "center", alpha=ua)
+        text(ctx, "Share your role, market, and mandate stage. An advisor follows up.", W / 2, 598, SUB, 22, SKY,
+             "center", alpha=ua)
+        sa = ease_out(prog(t, phrase_time(l1, "subscribe"), 0.5))
+        text(ctx, "Subscribe  ·  @ConAurora", W / 2, 646, SANS_MED, 24, LOGO_CREAM, "center", alpha=sa)
+        np_ = prog(t, phrase_time(l1, "Next") - 0.1, 0.6)
         if np_ > 0:
-            with wipe(ctx, 380, 676, 1160, 210, np_, "up"):
-                rect(ctx, 380, 676, 1160, 210, PAGE, radius=10)
-                na = ease_out(prog(t, l1["start"] + 0.2, 0.5))
-                text(ctx, "NEXT EPISODE", 420, 724, SANS_SEMI, 20, CORAL, alpha=na, tracking=2)
-                text_block(ctx, "Who receives the benefit: the owner, operator, or developer?", 420, 778, HEAD, 36,
+            with wipe(ctx, 380, 684, 1160, 200, np_, "up"):
+                rect(ctx, 380, 684, 1160, 200, PAGE, radius=10)
+                na = ease_out(prog(t, phrase_time(l1, "Next") + 0.2, 0.5))
+                text(ctx, "NEXT EPISODE", 420, 728, MONO, 18, CORAL, alpha=na, tracking=2)
+                text_block(ctx, "Who receives the benefit: the owner, operator, or developer?", 420, 780, HEAD, 36,
                            INK, 700, 1.15, alpha=na)
                 for k, (top, bottom_c, kw) in enumerate(((INK, SKY, {"prop": "keys", "arms": "hold"}),
                                                         (WHITE, PURPLE, {"coat": True, "hair_style": "bun"}),
                                                         (SKY, INK, {"hardhat": True, "arms": "point", "facing": -1}))):
                     fa = ease_out(prog(t, phrase_time(l1, ("owner", "operator", "developer")[k]), 0.5))
-                    person(ctx, 1230 + k * 105, 872, 170, top, bottom_c, alpha=fa, **kw)
+                    person(ctx, 1230 + k * 105, 872, 165, top, bottom_c, alpha=fa, **kw)
 
 
 def main():

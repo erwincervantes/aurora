@@ -18,14 +18,14 @@
     {
       "id": "s_zone",
       "lines": [
-        "In El Salvador, this regime covers new investments in San Salvador's defined Historic Center."
+        "It applies only to new investments in San Salvador's defined Historic Center."
       ]
     },
     {
       "id": "s_checks",
       "lines": [
         "Check three things.",
-        "Location: inside the defined perimeter.",
+        "Location: inside the perimeter.",
         "Investment: an eligible activity, above the minimum.",
         "Approval: qualified by the Planning Authority."
       ]
@@ -33,13 +33,13 @@
     {
       "id": "s_benef",
       "lines": [
-        "Then: who receives it? A landlord's approval doesn't automatically cut a tenant's taxes."
+        "Then ask who receives it. A landlord's approval doesn't automatically cut a tenant's taxes."
       ]
     },
     {
       "id": "s_close",
       "lines": [
-        "Subscribe to Aurora for the next breakdown: who actually gets the benefit — owner, operator, or developer."
+        "Weighing a site there? Request an engagement at conaurora.com, or subscribe for the next breakdown."
       ]
     }
   ],

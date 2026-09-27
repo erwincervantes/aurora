@@ -9,138 +9,128 @@ But can it turn a weak location
 into a good investment?
 
 3
-00:00:06,009 --> 00:00:07,576
-Here's which
-incentive applies,
+00:00:06,009 --> 00:00:11,280
+Here's who qualifies, who actually benefits, and
+what's left after location and execution costs.
 
 4
-00:00:07,576 --> 00:00:11,868
-who receives the benefit, and what remains
-after location and execution costs.
-
-5
-00:00:12,018 --> 00:00:14,416
+00:00:11,430 --> 00:00:13,828
 In El Salvador,
 qualifying new investments
 
-6
-00:00:14,416 --> 00:00:19,851
+5
+00:00:13,828 --> 00:00:19,265
 in San Salvador's defined Historic Center may
 receive up to ten years of income-tax relief.
 
+6
+00:00:19,305 --> 00:00:23,341
+That's a specific regime for a
+specific area, not a nationwide rule.
+
 7
-00:00:19,891 --> 00:00:24,465
-That's a specific regime for a specific area,
-separate from nationwide programs.
+00:00:23,381 --> 00:00:25,472
+And not every
+business qualifies.
 
 8
-00:00:24,505 --> 00:00:28,772
-Not every business qualifies,
-so verify current rules before underwriting.
-
-9
-00:00:28,922 --> 00:00:30,350
+00:00:25,622 --> 00:00:27,046
 Start with three checks.
 
-10
-00:00:30,390 --> 00:00:33,479
-First, exact location:
-inside the defined perimeter.
+9
+00:00:27,086 --> 00:00:29,363
+Location: inside the
+defined perimeter.
 
-11
-00:00:33,479 --> 00:00:36,095
+10
+00:00:29,363 --> 00:00:31,939
 One block outside can
 change the answer.
 
+11
+00:00:31,979 --> 00:00:37,177
+Investment: an eligible activity, such as food,
+lodging, or restoration, above the minimum.
+
 12
-00:00:36,135 --> 00:00:37,929
-Second,
-a qualifying investment:
+00:00:37,217 --> 00:00:40,461
+Approval: the Planning Authority
+must qualify the project.
 
 13
-00:00:37,929 --> 00:00:42,431
-an eligible activity, like food, lodging,
-or restoration, above the minimum.
-
-14
-00:00:42,471 --> 00:00:46,997
-Third, approval: the Historic Center's
-Planning Authority must qualify the project.
-
-15
-00:00:46,997 --> 00:00:48,656
+00:00:40,461 --> 00:00:42,153
 No approval, no benefit.
 
-16
-00:00:48,806 --> 00:00:51,225
-Then ask: which entity
-receives the benefit?
+14
+00:00:42,303 --> 00:00:43,767
+Then ask who receives it.
 
-17
-00:00:51,265 --> 00:00:54,833
+15
+00:00:43,807 --> 00:00:47,377
 Owner, operator, and developer
 are often different companies.
 
-18
-00:00:54,873 --> 00:00:59,094
+16
+00:00:47,417 --> 00:00:51,563
 A landlord's qualification doesn't
-automatically lower a tenant's taxes.
+automatically cut a tenant's taxes.
 
-19
-00:00:59,244 --> 00:01:03,035
-Here's a simplified,
-hypothetical annual after-tax comparison.
+17
+00:00:51,713 --> 00:00:55,450
+Here's a simplified, hypothetical
+annual comparison, after tax.
 
-20
-00:01:03,075 --> 00:01:05,622
+18
+00:00:55,490 --> 00:00:58,062
 Thirty thousand dollars
 of assumed tax savings,
 
+19
+00:00:58,062 --> 00:01:03,227
+minus twenty-four thousand in added after-tax
+occupancy costs, leaves six thousand a year.
+
+20
+00:01:03,267 --> 00:01:05,887
+It leaves out other costs,
+timing, and risk.
+
 21
-00:01:05,622 --> 00:01:09,252
-minus twenty-four thousand in
-additional after-tax occupancy costs,
+00:01:05,887 --> 00:01:09,751
+It's not a Salvadoran tax
+calculation or a promised return.
 
 22
-00:01:09,252 --> 00:01:10,955
-leaves six thousand a year.
+00:01:09,901 --> 00:01:14,564
+Demand, permits, utilities,
+and opening delays can erase a thin advantage.
 
 23
-00:01:10,995 --> 00:01:14,172
-It excludes other cost,
-timing, and risk differences.
+00:01:14,604 --> 00:01:18,494
+Underwrite the base case without incentives,
+and show the benefit separately.
 
 24
-00:01:14,172 --> 00:01:18,119
-It's not a Salvadoran tax calculation,
-or a promised return.
+00:01:18,644 --> 00:01:20,903
+That's the work Aurora
+does on the ground:
 
 25
-00:01:18,269 --> 00:01:20,116
-Execution still
-matters: demand,
+00:01:20,903 --> 00:01:26,040
+verify eligibility, test the site, and model
+the real cost to open, before capital moves.
 
 26
-00:01:20,116 --> 00:01:24,165
-permits, utilities, and opening
-delays can erase a thin advantage.
+00:01:26,190 --> 00:01:28,109
+Weighing a Historic
+Center site?
 
 27
-00:01:24,205 --> 00:01:29,042
-So underwrite the base case without incentives,
-then show the qualified benefit separately.
+00:01:28,109 --> 00:01:30,687
+Request an engagement
+at conaurora.com.
 
 28
-00:01:29,192 --> 00:01:32,566
-Subscribe to Aurora for illustrated
-breakdowns of incentives,
-
-29
-00:01:32,566 --> 00:01:34,852
-locations,
-and the real cost to open.
-
-30
-00:01:34,892 --> 00:01:38,661
-Next: who receives the benefit —
+00:01:30,727 --> 00:01:35,576
+And subscribe. Next: who receives the benefit —
 the owner, operator, or developer?

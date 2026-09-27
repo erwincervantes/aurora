@@ -69,7 +69,14 @@ def build_captions(timeline, max_chars=48, max_rows=2):
     lines = [line for scene in timeline["scenes"] for line in scene["lines"]]
     for index, line in enumerate(lines):
         chunks = []
-        for sentence in re.split(r"(?<=[.?!])\s+", line["text"]):  # never merge across sentences
+        sentences = re.split(r"(?<=[.?!])\s+", line["text"])
+        merged = []  # keep sentences apart, except fold a very short one (<= 2 words) into the next
+        for sentence in sentences:
+            if merged and len(merged[-1].split()) <= 2:
+                merged[-1] = f"{merged[-1]} {sentence}"
+            else:
+                merged.append(sentence)
+        for sentence in merged:
             chunks.extend(_chunk_sentence(sentence, max_chars, max_rows))
         total_chars = sum(len(" ".join(c)) for c in chunks)
         cursor = line["start"]

@@ -10,83 +10,83 @@
         {
           "text": "Up to ten years of tax relief?",
           "start": 0.4,
-          "end": 2.081
+          "end": 2.077
         },
         {
           "text": "For qualifying investments, potentially. For every business, no.",
-          "start": 2.381,
-          "end": 6.157
+          "start": 2.377,
+          "end": 6.151
         }
       ],
-      "end": 6.407
+      "end": 6.401
     },
     {
       "id": "s_zone",
       "chapter": "",
-      "start": 6.407,
+      "start": 6.401,
       "lines": [
         {
-          "text": "In El Salvador, this regime covers new investments in San Salvador's defined Historic Center.",
-          "start": 6.657,
-          "end": 12.02
+          "text": "It applies only to new investments in San Salvador's defined Historic Center.",
+          "start": 6.651,
+          "end": 10.864
         }
       ],
-      "end": 12.27
+      "end": 11.114
     },
     {
       "id": "s_checks",
       "chapter": "",
-      "start": 12.27,
+      "start": 11.114,
       "lines": [
         {
           "text": "Check three things.",
-          "start": 12.52,
-          "end": 13.455
+          "start": 11.364,
+          "end": 12.304
         },
         {
-          "text": "Location: inside the defined perimeter.",
-          "start": 13.755,
-          "end": 15.945
+          "text": "Location: inside the perimeter.",
+          "start": 12.604,
+          "end": 14.309
         },
         {
           "text": "Investment: an eligible activity, above the minimum.",
-          "start": 16.245,
-          "end": 19.106
+          "start": 14.609,
+          "end": 17.466
         },
         {
           "text": "Approval: qualified by the Planning Authority.",
-          "start": 19.406,
-          "end": 21.617
+          "start": 17.766,
+          "end": 19.977
         }
       ],
-      "end": 21.867
+      "end": 20.227
     },
     {
       "id": "s_benef",
       "chapter": "",
-      "start": 21.867,
+      "start": 20.227,
       "lines": [
         {
-          "text": "Then: who receives it? A landlord's approval doesn't automatically cut a tenant's taxes.",
-          "start": 22.117,
-          "end": 26.799
+          "text": "Then ask who receives it. A landlord's approval doesn't automatically cut a tenant's taxes.",
+          "start": 20.477,
+          "end": 25.374
         }
       ],
-      "end": 27.049
+      "end": 25.624
     },
     {
       "id": "s_close",
       "chapter": "",
-      "start": 27.049,
+      "start": 25.624,
       "lines": [
         {
-          "text": "Subscribe to Aurora for the next breakdown: who actually gets the benefit \u2014 owner, operator, or developer.",
-          "start": 27.299,
-          "end": 32.893
+          "text": "Weighing a site there? Request an engagement at conaurora.com, or subscribe for the next breakdown.",
+          "start": 25.874,
+          "end": 31.452
         }
       ],
-      "end": 34.093
+      "end": 32.652
     }
   ],
-  "duration": 34.093
+  "duration": 32.652
 }

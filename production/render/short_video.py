@@ -195,31 +195,35 @@ class ShortFilm(vc.Film):
             text(ctx, "Landlord approved ≠", LEFT + 40, 1208 + ndy, HEAD, 50, WHITE, alpha=na)
             text(ctx, "tenant benefits automatically", LEFT + 40, 1270 + ndy, SANS, 44, WHITE, alpha=na)
 
-    # ------------------------------------------------------------ close
+    # ------------------------------------------------------------ close: qualified inquiry
     def s_close(self, ctx, t):
         s = self.scenes["s_close"]["start"]
         l0 = self.line("s_close", 0)
-        a = ease_out(prog(t, s + 0.3, 0.6))
-        wordmark(ctx, W / 2, 390, 104, reverse=True, alpha=a, align="center")
-        text(ctx, "LATIN AMERICA EXPANSION", W / 2, 494, MONO, 24, CORAL, "center", a, tracking=3)
-        sp = prog(t, l0["start"] + 0.1, 0.6)
+        a = ease_out(prog(t, s + 0.2, 0.6))
+        wordmark(ctx, W / 2, 330, 80, reverse=True, alpha=a, align="center")
+        text(ctx, "LATIN AMERICA EXPANSION", W / 2, 420, MONO, 22, CORAL, "center", a, tracking=3)
+        qa, qdy = rise(t, l0["start"])
+        text_block(ctx, "Weighing a site in the Historic Center?", W / 2, 540 + qdy, HEAD, 62, LOGO_CREAM, 860, 1.12,
+                   "center", qa)
+        cp = prog(t, phrase_time(l0, "Request an engagement"), 0.6)
+        if cp > 0:
+            with pop(ctx, W / 2, 740, cp):
+                pill(ctx, "Request an engagement  →", W / 2, 704, ORANGE, 36, LOGO_INK, SANS_SEMI, pad_x=44, align="center")
+        ua, _ = rise(t, phrase_time(l0, "conaurora.com"))
+        text(ctx, "conaurora.com", W / 2, 852, SANS_SEMI, 40, LOGO_CREAM, "center", alpha=ua)
+        text_block(ctx, "Share your role, market, and mandate stage. An advisor follows up.", W / 2, 904, SUB, 30, SKY,
+                   820, 1.25, "center", ua)
+        sp = prog(t, phrase_time(l0, "subscribe"), 0.6)
         if sp > 0:
-            with pop(ctx, W / 2, 598, sp):
-                pill(ctx, "Subscribe", W / 2, 564, ORANGE, 38, LOGO_INK, SANS_SEMI, pad_x=56, align="center")
-        text(ctx, "@ConAurora", W / 2, 706, SANS_MED, 38, WHITE, "center", alpha=rise(t, l0["start"] + 0.5)[0])
-        np_ = prog(t, phrase_time(l0, "the next breakdown") - 0.2, 0.6)
-        if np_ > 0:
-            with wipe(ctx, LEFT, 770, 920, 560, np_, "up"):
-                rect(ctx, LEFT, 770, 920, 560, PAGE, radius=14)
-                na = ease_out(prog(t, phrase_time(l0, "the next breakdown"), 0.5))
-                text(ctx, "NEXT BREAKDOWN", LEFT + 50, 836, SANS_SEMI, 26, CORAL, alpha=na, tracking=2)
-                text_block(ctx, "Who actually gets the benefit: owner, operator, or developer?", LEFT + 50, 906,
-                           HEAD, 52, INK, 820, 1.14, alpha=na)
+            with wipe(ctx, LEFT, 1030, 920, 300, sp, "up"):
+                rect(ctx, LEFT, 1030, 920, 300, PAGE, radius=14)
+                na = ease_out(prog(t, phrase_time(l0, "subscribe") + 0.2, 0.5))
+                text(ctx, "SUBSCRIBE · @CONAURORA", LEFT + 44, 1088, MONO, 24, CORAL, alpha=na, tracking=2)
+                text_block(ctx, "Next: who actually gets the benefit?", LEFT + 44, 1150, HEAD, 46, INK, 520, 1.12, alpha=na)
                 for k, (top, bottom_c, kw) in enumerate(((INK, SKY, {"prop": "keys", "arms": "hold"}),
                                                         (WHITE, PURPLE, {"coat": True, "hair_style": "bun"}),
                                                         (SKY, INK, {"hardhat": True, "arms": "point", "facing": -1}))):
-                    fa = ease_out(prog(t, phrase_time(l0, ("owner", "operator", "developer")[k]), 0.5))
-                    person(ctx, 300 + k * 240, 1290, 200, top, bottom_c, alpha=fa, **kw)
+                    person(ctx, 680 + k * 100, 1300, 190, top, bottom_c, alpha=ease_out(prog(t, phrase_time(l0, "subscribe") + 0.3 + k * 0.15, 0.4)), **kw)
 
 
 def main():

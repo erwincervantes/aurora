@@ -20,7 +20,7 @@
       "id": "promise",
       "chapter": "In this film",
       "lines": [
-        "Here's which incentive applies, who receives the benefit, and what remains after location and execution costs."
+        "Here's who qualifies, who actually benefits, and what's left after location and execution costs."
       ]
     },
     {
@@ -28,8 +28,8 @@
       "chapter": "01 · The opportunity",
       "lines": [
         "In El Salvador, qualifying new investments in San Salvador's defined Historic Center may receive up to ten years of income-tax relief.",
-        "That's a specific regime for a specific area, separate from nationwide programs.",
-        "Not every business qualifies, so verify current rules before underwriting."
+        "That's a specific regime for a specific area, not a nationwide rule.",
+        "And not every business qualifies."
       ]
     },
     {
@@ -37,43 +37,50 @@
       "chapter": "02 · Three checks",
       "lines": [
         "Start with three checks.",
-        "First, exact location: inside the defined perimeter. One block outside can change the answer.",
-        "Second, a qualifying investment: an eligible activity, like food, lodging, or restoration, above the minimum.",
-        "Third, approval: the Historic Center's Planning Authority must qualify the project. No approval, no benefit."
+        "Location: inside the defined perimeter. One block outside can change the answer.",
+        "Investment: an eligible activity, such as food, lodging, or restoration, above the minimum.",
+        "Approval: the Planning Authority must qualify the project. No approval, no benefit."
       ]
     },
     {
       "id": "beneficiary",
       "chapter": "03 · Who benefits",
       "lines": [
-        "Then ask: which entity receives the benefit?",
+        "Then ask who receives it.",
         "Owner, operator, and developer are often different companies.",
-        "A landlord's qualification doesn't automatically lower a tenant's taxes."
+        "A landlord's qualification doesn't automatically cut a tenant's taxes."
       ]
     },
     {
       "id": "economics",
       "chapter": "04 · The arithmetic",
       "lines": [
-        "Here's a simplified, hypothetical annual after-tax comparison.",
-        "Thirty thousand dollars of assumed tax savings, minus twenty-four thousand in additional after-tax occupancy costs, leaves six thousand a year.",
-        "It excludes other cost, timing, and risk differences. It's not a Salvadoran tax calculation, or a promised return."
+        "Here's a simplified, hypothetical annual comparison, after tax.",
+        "Thirty thousand dollars of assumed tax savings, minus twenty-four thousand in added after-tax occupancy costs, leaves six thousand a year.",
+        "It leaves out other costs, timing, and risk. It's not a Salvadoran tax calculation or a promised return."
       ]
     },
     {
       "id": "execution",
       "chapter": "05 · Execution",
       "lines": [
-        "Execution still matters: demand, permits, utilities, and opening delays can erase a thin advantage.",
-        "So underwrite the base case without incentives, then show the qualified benefit separately."
+        "Demand, permits, utilities, and opening delays can erase a thin advantage.",
+        "Underwrite the base case without incentives, and show the benefit separately."
+      ]
+    },
+    {
+      "id": "services",
+      "chapter": "How Aurora helps",
+      "lines": [
+        "That's the work Aurora does on the ground: verify eligibility, test the site, and model the real cost to open, before capital moves."
       ]
     },
     {
       "id": "close",
       "chapter": "",
       "lines": [
-        "Subscribe to Aurora for illustrated breakdowns of incentives, locations, and the real cost to open.",
-        "Next: who receives the benefit — the owner, operator, or developer?"
+        "Weighing a Historic Center site? Request an engagement at conaurora.com.",
+        "And subscribe. Next: who receives the benefit — the owner, operator, or developer?"
       ]
     }
   ],
